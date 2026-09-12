@@ -1,7 +1,7 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 130 plugins, 17 categories.
+> 132 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
@@ -10,7 +10,7 @@
 - [brand](#brand) (3)
 - [browser](#browser) (2)
 - [distribute](#distribute) (4)
-- [edit](#edit) (4)
+- [edit](#edit) (5)
 - [effects](#effects) (6)
 - [export](#export) (6)
 - [fx](#fx) (7)
@@ -20,7 +20,7 @@
 - [render](#render) (6)
 - [subtitle](#subtitle) (5)
 - [transitions](#transitions) (1)
-- [video](#video) (25)
+- [video](#video) (26)
 - [voice](#voice) (12)
 
 ## analyze
@@ -88,6 +88,7 @@
 | Plugin | What it does | Outputs |
 |---|---|---|
 | `edit.beat_cut` | Convert an audio.beat grid into an explicit clip list for render.timeline, so every cut lands on an onset (or beat). | data |
+| `edit.conform` | Relink a timeline cut against proxies back to the original media, verifying the swap is valid. | data |
 | `edit.ops` | Apply a batch of timeline operations (delete/insert/reorder/update/retime) to a JSON timeline spec. Returns the new timeline + a log of applied ops. | json |
 | `edit.transcript_cut` | Turn a transcript into a clip list: drop filler words, keep only matching lines, and tighten silences. | data |
 | `video.scene_split` | Split a long clip into N sub-clips: evenly (mode=equal, count=N) or at explicit comma-separated timestamp marks (mode=marks). Uses lossless trim+concat. | video |
@@ -210,6 +211,7 @@
 | `video.info` | Return duration, dimensions, codecs and streams for a video file. | data |
 | `video.merge` | Join multiple clips end to end. Re-encodes so mixed sources always work. | video |
 | `video.overlay` | Overlay one video/image on top of another (PiP). | video |
+| `video.proxy` | Build low-resolution editing proxies for a file or a folder, plus a manifest that edit.conform uses to relink the originals. | video, data |
 | `video.remove_silence` | Cut silent passages out of a video (also removes the matching picture). | video |
 | `video.resize` | Scale a video to an explicit size or to a target short-edge height. | video |
 | `video.reverse` | Play a clip backwards (re-encodes, no audio). | video |

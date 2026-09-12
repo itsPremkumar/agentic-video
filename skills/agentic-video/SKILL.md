@@ -47,6 +47,7 @@ next stage. Skip stages you do not need; do not reorder them.
 | # | Stage                    | Plugins                                                               |
 | - | ------------------------ | --------------------------------------------------------------------- |
 | 0 | Plan                     | `forge list`, `forge describe`                                        |
+| 0b | Proxies (long/4K footage)| `video.proxy` → cut → `edit.conform` → render from originals          |
 | 1 | Acquire stock media      | `image.download`, `video.download`, `music.download`                  |
 | 2 | Create media from markup | `image.create` (SVG / HTML+CSS), `image.canvas`                       |
 | 3 | Capture the web          | `browser.screenshot`, `browser.scroll_capture`, `browser.record_flow` |
@@ -224,6 +225,7 @@ A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.js
 | A website as a video                | `browser.record_flow`                                    | —                                           |
 | Animated text / lower-third / chart | `motion.remotion_template`                               | `video.text`                                |
 | Cuts that land on the music         | `audio.beat` → `edit.beat_cut`                            | cutting by eye                              |
+| Editing 4K / long footage           | `video.proxy` → cut → `edit.conform`                     | cutting on originals                        |
 | Bespoke motion graphics             | `motion.remotion` (your TSX)                             | —                                           |
 | Move a still                        | `motion.effect`                                          | `video.from_images` (that's for many)       |
 | Move/zoom/rotate a CLIP over time   | `video.transform` (keyframes)                            | `motion.effect` (stills only)               |

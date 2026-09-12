@@ -193,6 +193,24 @@ Verified with an agent-authored composition using **nine packages**: `Transition
 local WAV via `Audio`, and a `Badge` component imported from a second file. 255 frames,
 1080x1080, h264/aac, no black frames.
 
+### Offline/online: `video.proxy` + `edit.conform`
+
+The assistant-editor role existed nowhere in the toolkit. Now:
+
+`video.proxy` walks a file or a folder and writes low-resolution stand-ins plus a manifest.
+**Duration and frame rate are preserved exactly** — that is what makes the swap valid, because
+every timecode in an edit made against a proxy still means the same thing against the original.
+
+`edit.conform` reads that manifest and rewrites a timeline so `render.timeline` reads the
+originals instead. It refuses rather than warns when a proxy's duration has drifted: a proxy that
+does not match its original makes every cut point after it wrong, and silently moving them is
+exactly the class of failure this project exists to avoid.
+
+Verified end to end: three clips at 1080x1080 → proxies at 540x540 (21/16/30% of the original
+size, durations identical to 3 decimals) → an edit with tight trims against the proxies → conform
+→ render at **1080x1080 from the originals**, 3.70s, matching `1.2 + 1.5 + 1.8 − 2×0.4`. A
+tampered manifest with a 0.4s drift is correctly refused.
+
 ### The next step, when Voicebox is installed
 
 `voice.voicebox_stories` and `voice.voicebox_effects` are thin wrappers over endpoints that
@@ -212,7 +230,7 @@ honest way to see what "replace a post team" would require.
 
 | Role | What they actually do | Covered? |
 |---|---|---|
-| **Assistant editor** | Ingest, organise bins, sync double-system audio, generate proxies, back up | ❌ no ingest, no sync, no proxies |
+| **Assistant editor** | Ingest, organise bins, sync double-system audio, generate proxies, back up | 🟡 **proxies + conform now**; still no ingest, no double-system sync |
 | **Editor** | Assembly → rough → fine cut; pacing; picture lock | 🟡 `render.timeline`, `edit.beat_cut`, `edit.transcript_cut`, `video.trim` — but no versions, no lock, no multicam |
 | **Sound editor** | Dialogue edit, ADR flags, ambience, Foley, SFX, mix, **stem export** | 🟡 strong on processing (`audio.master`, `audio.eq`, `audio.duck`); **no stems export**, no Foley/ambience |
 | **Colourist** | Conform from EDL/XML, primary (shot matching, exposure, white balance), creative grade, **secondary corrections** | 🟡 grades exist; **scopes now added**; still no shot matching, no secondaries, no conform |
@@ -258,7 +276,7 @@ Superseding the earlier list, now ordered against the role table above.
 | # | Build | Role it serves | Why now |
 |---|---|---|---|
 | ~~1~~ | ~~**Per-clip properties in `render.timeline`** (`transform`, `volume`, `speed`)~~ | Editor | **Done.** Turns a concat into an edit. |
-| 2 | **`video.proxy` + `edit.conform`** | Assistant editor | Unblocks 4K and any real offline/online workflow. Straightforward. |
+| ~~2~~ | ~~**`video.proxy` + `edit.conform`**~~ | Assistant editor | **Done.** The offline/online split now exists. |
 | 3 | **`analyze.search`** — search transcripts and footage by meaning | Editor | The second half of transcript-driven editing: find the shot, not just cut it. |
 | 4 | **`delivery.stems`** | Sound editor | Broadcast/distribution requirement. Cheap: the pipeline already knows which file is voice and which is music. |
 | 5 | **`export.platform`** — encode presets per platform + broadcast legalisation | Delivery | Table stakes; `export.derivative` only does aspect ratios. |

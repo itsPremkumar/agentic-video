@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`video.proxy` + `edit.conform`** — the offline/online split, which the toolkit had no
+  representation of. `video.proxy` builds low-resolution editing stand-ins for a file or a folder
+  and writes a manifest; `edit.conform` reads that manifest and rewrites a timeline so
+  `render.timeline` reads the originals. Proxies preserve duration and frame rate exactly, which is
+  what makes the swap valid — and conform **refuses** rather than warns when a proxy's duration has
+  drifted, because that would silently move every cut point after it.
 - **Per-clip properties in `render.timeline`** — clips now carry `transform` (`scale`, `x`, `y`,
   `rotation`, `background`), `speed` and `volume`. This was the highest-leverage change in the
   codebase: it turns the timeline from a concat into an edit. You can now hold one shot smaller
