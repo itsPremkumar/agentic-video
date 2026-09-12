@@ -14,6 +14,9 @@ permissions:
   contents: read
 
 jobs:
+  # Typecheck + plugin contract. Needs no ffmpeg: it validates manifests and
+  # types, it does not render anything. Run on both OSes because the id <-> path
+  # rule and path handling are exactly what differ between them.
   contract:
     name: Contract check — node ${{ matrix.node }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -43,14 +46,11 @@ jobs:
 
       - run: npm ci
 
-      - name: Verify ffmpeg
-        run: |
-          ffmpeg -version
-          ffprobe -version
-
       - name: Typecheck + plugin contract
         run: npm test
 
+  # Actually executes a plugin, so this one needs a real ffmpeg. GitHub's
+  # runner images no longer ship it, so install it here.
   smoke:
     name: Runtime smoke
     runs-on: ubuntu-latest
@@ -68,6 +68,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Verify ffmpeg
+        run: |
+          ffmpeg -version | head -1
+          ffprobe -version | head -1
+
       # Proves the CLI boots, the loader discovers every plugin, and a
       # manifest renders without a real render.
       - name: forge list
@@ -77,7 +87,6 @@ jobs:
         run: npm run forge -- describe image.resize
 
       - name: Run one real plugin end to end
-        shell: bash
         run: |
           node -e "const fs=require('fs');fs.writeFileSync('ci-fixture.png',Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==','base64'))"
           npm run forge -- run image.resize \
@@ -87,7 +96,6 @@ jobs:
       # The explicit-failure contract: a bad input must exit non-zero and
       # report INVALID_INPUT with retryable=true — not a bare PLUGIN_ERROR.
       - name: A bad input fails loudly
-        shell: bash
         run: |
           set +e
           npm run forge -- run image.resize --input src=ci-fixture.png --input width=0 --input height=0
