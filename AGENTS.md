@@ -69,8 +69,8 @@ honestly.
 | Cluster near-duplicate images    | `image.dedup` (dHash + Hamming)                                                       | zero-dep, fast                      |
 | Score image quality (0-5)        | `image.aesthetic` (resolution + aspect + size + bitdepth)                             | no-LLM                              |
 | Auto-pick best thumbnail frame   | `image.best_frame` (sharpness + contrast + face detection)                            | samples across video                |
-| Verify image content (AI vision) | `image.verify` (openai/ollama/heuristic)                                              | rejects bad generations             |
-| Verify video content             | `video.verify` (frame extraction + image.verify)                                      | rejects bad renders                 |
+| Verify image content             | `image.verify` (heuristic checks or agent inspection)                                 | rejects bad generations             |
+| Verify video content             | `video.verify` (frame extraction + heuristic checks or agent inspection)              | rejects bad renders                 |
 | Tag relevance vs script          | `image.relevance` (Jaccard token overlap)                                             | pure set math                       |
 | Get a stock video                | `video.download` (pexels / pixabay / wikimedia)                                       | pexels+pixabay need keys            |
 | Stills -> video (Ken Burns)      | `video.from_images`                                                                   | local ffmpeg, no key                |

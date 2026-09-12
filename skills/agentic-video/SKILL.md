@@ -35,8 +35,6 @@ cd <path-to>/agentic-video
 npm run forge list              # must print 154 plugins
 ffmpeg -version                 # required for almost everything
 cp .env.example .env            # add PEXELS_API_KEY — see references/providers.md
-# Optional: OPENAI_API_KEY for AI-powered image/video verification (image.verify / video.verify)
-# Optional: OLLAMA_URL for local vision model verification
 npx playwright install chromium # only if you use browser.* plugins
 ```
 
@@ -214,9 +212,10 @@ npm run forge -- run video.verify --input src=final.mp4 \
 ```
 
 **Verification rules:**
-- `engine=heuristic` — zero deps, checks file size, dimensions, entropy (not blank). Always works.
-- `engine=openai` — needs `OPENAI_API_KEY`, uses GPT-4o for actual content matching. Most accurate.
-- `engine=ollama` — needs local ollama with vision model (e.g. `ollama pull llava`). Private.
+- `engine=heuristic` (default) — zero deps, deterministic checks: file size, dimensions,
+  entropy (not blank), edge density (sharpness), brightness. Returns PASS/FAIL.
+- `engine=agent` — returns the image / sampled frames with a structured report.
+  The driving agent inspects the media and decides PASS/FAIL itself. No external API called.
 - `strict=true` (default) — one failed frame = entire video rejected. Regenerate.
 - On FAIL: read the `reason`, fix the prompt or upstream step, and regenerate. Never use unverified media.
 

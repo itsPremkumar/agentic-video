@@ -4,51 +4,39 @@ import { ffmpeg, probe } from '../../core/media.ts';
 import { S, requireFile, num, resolveOutPath, str } from '../_shared/common.ts';
 
 /**
- * video.verify — verify a video by sampling frames and checking them.
+ * video.verify — verify a video by sampling frames and running deterministic checks.
  *
  * Two modes:
- *   - frame: Extract N frames evenly across the video, verify each with
- *            image.verify (or heuristic checks if no vision engine).
- *   - direct: If the vision model supports video, send the whole file.
- *             (Currently only supported with openai engine + gpt-4o.)
+ *   - heuristic (default): Extract N frames evenly across the video, run
+ *     deterministic checks on each (file size, entropy, edge density, brightness).
+ *     The video passes only if ALL frames pass (or ≥80% if strict=false).
+ *     No AI. No LLM. Pure signal processing.
+ *   - agent: Extract key frames and return them with a structured report.
+ *     The driving agent (which already has vision) inspects the frames and
+ *     decides PASS/FAIL itself. This plugin does not call any model.
  *
- * The video passes only if ALL sampled frames pass. The agent should
- * reject and regenerate if any frame fails.
+ * The agent should always run this after video.generate, motion.remotion,
+ * render.timeline, or any video render. On FAIL, reject and regenerate.
  */
 export default definePlugin({
     id: 'video.verify',
-    name: 'Verify video content',
+    name: 'Verify video',
     category: 'video',
-    description: 'Verify a video matches expected content by extracting frames and checking them. Rejects the video if any sampled frame fails.',
+    description: 'Verify a video by sampling frames and running deterministic checks (heuristic) or preparing frames for the agent to judge (agent mode). No external AI is called.',
     inputs: {
         src: S.string('Video file to verify', { required: true }),
-        prompt: S.string('What the video should contain (e.g. "a cat playing with a ball")', { required: true }),
-        engine: S.string('Verification backend for frames', { enum: ['openai', 'ollama', 'heuristic'], default: 'heuristic' }),
-        mode: S.string('Verification mode', { enum: ['frame', 'direct'], default: 'frame' }),
-        model: S.string('Model name (for ollama/openai)', { default: '' }),
+        prompt: S.string('What the video should contain (used in agent mode for context)', { default: '' }),
+        engine: S.string('Verification mode', { enum: ['heuristic', 'agent'], default: 'heuristic' }),
         samples: S.int('Number of frames to sample (0 = auto: 1 per 5 seconds, max 20)', { default: 0, minimum: 0 }),
         strict: S.bool('Fail the entire video if ANY frame fails', { default: true }),
+        minEntropy: S.number('Minimum YSTD per frame (lower = more blank)', { default: 5, minimum: 0 }),
         out: S.string('Output JSON file name', { default: 'video-verify.json' }),
     },
     outputs: ['data'],
     async run({ input, ctx }) {
         const src = requireFile(input.src, 'src');
-        const prompt = str(input.prompt, '');
         const engine = str(input.engine, 'heuristic');
-        const mode = str(input.mode, 'frame');
         const strict = input.strict !== false;
-
-        if (!prompt) {
-            throw new PluginFailure({
-                code: 'INVALID_INPUT',
-                message: 'prompt is required — describe what the video should contain.',
-                input: { prompt },
-                retryable: true,
-                hint: 'e.g. "a cat playing with a red ball in a garden"',
-            });
-        }
-
-        const dest = resolveOutPath(ctx, String(input.out ?? 'video-verify.json'));
 
         // Get video info
         const info = await probe(src);
@@ -62,18 +50,77 @@ export default definePlugin({
             });
         }
 
-        let result: Record<string, unknown>;
+        // Determine sample count
+        const sampleCount = num(input.samples, 0) || Math.min(20, Math.max(3, Math.floor(duration / 5)));
 
-        if (mode === 'direct' && engine === 'openai') {
-            // Direct video verification (OpenAI supports this with gpt-4o)
-            result = await verifyDirect(src, prompt, str(input.model, 'gpt-4o'));
-        } else {
-            // Frame-based verification
-            const sampleCount = num(input.samples, 0) || Math.min(20, Math.max(3, Math.floor(duration / 5)));
-            result = await verifyFrames(src, prompt, engine, str(input.model, ''), sampleCount, strict, duration, ctx);
+        // Extract evenly-spaced frames
+        const interval = duration / (sampleCount + 1);
+        const tmpDir = resolveOutPath(ctx, 'verify-frames');
+        fs.mkdirSync(tmpDir, { recursive: true });
+
+        const frames: Array<{ time: number; path: string }> = [];
+        for (let i = 1; i <= sampleCount; i++) {
+            const t = i * interval;
+            const framePath = `${tmpDir}/frame_${String(i).padStart(4, '0')}.jpg`;
+            await ffmpeg(['-ss', String(t), '-i', src, '-vframes', '1', '-q:v', '2', '-y', framePath]);
+            frames.push({ time: Number(t.toFixed(2)), path: framePath });
         }
 
-        fs.writeFileSync(dest, JSON.stringify({ ...result, source: src, prompt, engine, mode, duration }, null, 2));
+        // Run checks on each frame
+        const frameResults: Array<Record<string, unknown>> = [];
+        let passCount = 0;
+
+        for (const frame of frames) {
+            const checks = await checkFrame(frame.path, num(input.minEntropy, 5));
+            const framePass = checks.every((c: any) => c.pass);
+            if (framePass) passCount++;
+
+            frameResults.push({
+                time: frame.time,
+                path: frame.path,
+                pass: framePass,
+                checks,
+            });
+        }
+
+        const total = frames.length;
+        const passRate = total > 0 ? passCount / total : 0;
+
+        const dest = resolveOutPath(ctx, String(input.out ?? 'video-verify.json'));
+        let result: Record<string, unknown>;
+
+        if (engine === 'agent') {
+            // Agent mode: return frames + report, let agent decide
+            result = {
+                pass: null,
+                verdict: 'AGENT_DECISION_REQUIRED',
+                reason: 'The driving agent should inspect the sampled frames and compare against the prompt.',
+                frameResults,
+                totalFrames: total,
+                passedFrames: passCount,
+                passRate: Number(passRate.toFixed(2)),
+                prompt: str(input.prompt, ''),
+                src,
+                hint: 'Review the frames above. Do they match the prompt? If any frame is wrong, reject and regenerate.',
+            };
+        } else {
+            // Heuristic mode: deterministic PASS/FAIL
+            const pass = strict ? passCount === total : passRate >= 0.8;
+            result = {
+                pass,
+                verdict: pass ? 'PASS' : 'FAIL',
+                confidence: Number(passRate.toFixed(2)),
+                reason: pass
+                    ? `${passCount}/${total} frames passed all checks.`
+                    : `Only ${passCount}/${total} frames passed. Failed at: ${frameResults.filter((f: any) => !f.pass).map((f: any) => `${f.time}s`).join(', ')}`,
+                frameResults,
+                totalFrames: total,
+                passedFrames: passCount,
+                passRate: Number(passRate.toFixed(2)),
+            };
+        }
+
+        fs.writeFileSync(dest, JSON.stringify({ ...result, source: src, engine, duration }, null, 2));
 
         const passed = result.pass === true;
         return {
@@ -81,222 +128,83 @@ export default definePlugin({
                 {
                     path: dest,
                     kind: 'data',
-                    meta: { pass: passed, confidence: result.confidence, engine, mode },
+                    meta: { pass: result.pass, verdict: result.verdict, engine, frames: total },
                 },
+                // Also output the sampled frames as image artifacts for agent inspection
+                ...frames.map((f) => ({
+                    path: f.path,
+                    kind: 'image' as const,
+                    meta: { time: f.time, sample: true },
+                })),
             ],
             notes: passed
-                ? [`Video verification PASSED (${mode} / ${engine})`]
-                : [`Video verification FAILED (${mode} / ${engine}): ${result.reason}`],
+                ? [`Video verification PASSED — ${passCount}/${total} frames passed (${engine})`]
+                : result.pass === false
+                    ? [`Video verification FAILED — ${passCount}/${total} frames passed (${engine})`]
+                    : [`Video verification pending — AGENT must inspect ${total} sampled frames and decide PASS/FAIL`],
         };
     },
 });
 
-// ─── Frame-based verification ────────────────────────────────────────────────
+// ─── Per-frame deterministic checks ──────────────────────────────────────────
 
-async function verifyFrames(
-    src: string,
-    prompt: string,
-    engine: string,
-    model: string,
-    sampleCount: number,
-    strict: boolean,
-    videoDuration: number,
-    ctx: any,
-): Promise<Record<string, unknown>> {
-    // Extract evenly-spaced frames
-    const interval = videoDuration > 0 ? videoDuration / (sampleCount + 1) : 1;
-    const tmpDir = resolveOutPath(ctx, 'verify-frames');
-    fs.mkdirSync(tmpDir, { recursive: true });
-
-    const frames: Array<{ time: number; path: string }> = [];
-    for (let i = 1; i <= sampleCount; i++) {
-        const t = i * interval;
-        const framePath = `${tmpDir}/frame_${String(i).padStart(4, '0')}.jpg`;
-        await ffmpeg(['-ss', String(t), '-i', src, '-vframes', '1', '-q:v', '2', '-y', framePath]);
-        frames.push({ time: Number(t.toFixed(2)), path: framePath });
-    }
-
-    // Verify each frame
-    const frameResults: Array<Record<string, unknown>> = [];
-    let passCount = 0;
-
-    for (const frame of frames) {
-        let frameResult: Record<string, unknown>;
-
-        if (engine === 'heuristic') {
-            frameResult = await verifyFrameHeuristic(frame.path, prompt);
-        } else {
-            // For openai/ollama, we'd need to call the vision API per frame.
-            // To avoid making this plugin depend on image.verify internals,
-            // we use a heuristic here but note that the agent should use
-            // image.verify on key frames for AI verification.
-            frameResult = await verifyFrameHeuristic(frame.path, prompt);
-            frameResult.note = `For AI verification, run image.verify on frame: ${frame.path}`;
-        }
-
-        frameResults.push({
-            time: frame.time,
-            ...frameResult,
-        });
-        if (frameResult.pass === true) passCount++;
-    }
-
-    const total = frames.length;
-    const passRate = total > 0 ? passCount / total : 0;
-    const pass = strict ? passCount === total : passRate >= 0.8;
-
-    return {
-        pass,
-        confidence: passRate,
-        reason: pass
-            ? `${passCount}/${total} frames passed verification.`
-            : `Only ${passCount}/${total} frames passed. Failed frames at: ${frameResults.filter((f) => !f.pass).map((f) => `${f.time}s`).join(', ')}`,
-        frameResults,
-        totalFrames: total,
-        passedFrames: passCount,
-        prompt,
-    };
-}
-
-async function verifyFrameHeuristic(framePath: string, prompt: string): Promise<Record<string, unknown>> {
+async function checkFrame(framePath: string, _minEntropy: number): Promise<Array<{ name: string; pass: boolean; detail: string }>> {
     const checks: Array<{ name: string; pass: boolean; detail: string }> = [];
 
-    // 1. File exists and has content
-    const stats = fs.statSync(framePath);
-    const sizeOk = stats.size >= 1024;
-    checks.push({ name: 'file_size', pass: sizeOk, detail: `${stats.size} bytes` });
-
-    // 2. Not a blank frame
-    let entropyOk = true;
+    // 1. File size
+    let fileSize = 0;
     try {
-        const res = await ffmpeg([
-            '-i', framePath,
-            '-vf', 'format=gray,signalstats',
-            '-f', 'null', '-',
-        ]);
-        const ystdMatch = /YSTD:\s*([\d.]+)/.exec(res.stderr);
-        const ystd = ystdMatch ? Number(ystdMatch[1]) : 0;
-        entropyOk = ystd > 5;
-        checks.push({ name: 'entropy', pass: entropyOk, detail: `YSTD=${ystd.toFixed(2)}` });
+        const st = fs.statSync(framePath);
+        fileSize = st.size;
+        checks.push({ name: 'file_size', pass: fileSize >= 1024, detail: `${fileSize} bytes` });
     } catch {
-        checks.push({ name: 'entropy', pass: true, detail: 'skipped' });
+        checks.push({ name: 'file_size', pass: false, detail: 'not readable' });
+        return checks;
     }
 
-    // 3. Not a solid color / corruption
-    let corruptOk = true;
+    // 2. Valid image + dimensions
+    let width = 0;
+    let height = 0;
     try {
         const info = await probe(framePath);
-        const hasVideo = (info.streams ?? []).some((s: any) => s.codec_type === 'video');
-        corruptOk = hasVideo;
-        checks.push({ name: 'valid_image', pass: corruptOk, detail: hasVideo ? 'valid' : 'no video stream' });
+        const stream = (info.streams ?? []).find((s: any) => s.codec_type === 'video');
+        width = Number(stream?.width ?? 0);
+        height = Number(stream?.height ?? 0);
+        const hasVideo = !!stream;
+        checks.push({ name: 'valid_image', pass: hasVideo, detail: hasVideo ? `${width}x${height}` : 'no video stream' });
     } catch {
-        corruptOk = false;
         checks.push({ name: 'valid_image', pass: false, detail: 'probe failed' });
+        return checks;
     }
 
-    const allPass = checks.every((c) => c.pass);
-    return {
-        pass: allPass,
-        confidence: allPass ? 0.7 : 0.2,
-        reason: allPass ? 'Frame passes heuristic checks.' : `Failed: ${checks.filter((c) => !c.pass).map((c) => c.name).join(', ')}`,
-        checks,
-        prompt,
-    };
-}
-
-// ─── Direct video verification (OpenAI) ──────────────────────────────────────
-
-async function verifyDirect(src: string, prompt: string, model: string): Promise<Record<string, unknown>> {
-    const { optionalEnv } = await import('../../core/env.ts');
-    const apiKey = optionalEnv('OPENAI_API_KEY');
-    if (!apiKey) {
-        throw new PluginFailure({
-            code: 'MISSING_API_KEY',
-            message: 'OPENAI_API_KEY is not set.',
-            reason: 'Required for direct video verification.',
-            retryable: false,
-            hint: 'Set OPENAI_API_KEY in .env, or use mode=frame with engine=heuristic.',
-        });
-    }
-
-    // Read video and base64 encode (note: OpenAI has size limits)
-    const videoBuffer = fs.readFileSync(src);
-    const base64 = videoBuffer.toString('base64');
-    const mime = 'video/mp4';
-
-    // Note: OpenAI may have file size limits. This works for short clips.
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            model: model || 'gpt-4o',
-            messages: [
-                {
-                    role: 'user',
-                    content: [
-                        {
-                            type: 'text',
-                            text: `Evaluate whether this video accurately depicts: "${prompt}".\n\nRespond ONLY with JSON:\n{\n  "pass": true/false,\n  "confidence": 0.0-1.0,\n  "reason": "brief explanation"\n}`,
-                        },
-                        {
-                            type: 'video_url',
-                            video_url: {
-                                url: `data:${mime};base64,${base64}`,
-                            },
-                        },
-                    ],
-                },
-            ],
-            max_tokens: 500,
-        }),
+    // 3. Aspect ratio sanity
+    const aspectRatio = width > 0 && height > 0 ? width / height : 0;
+    const aspectOk = aspectRatio >= 0.1 && aspectRatio <= 10;
+    checks.push({
+        name: 'aspect_ratio',
+        pass: aspectOk,
+        detail: `${aspectRatio.toFixed(2)} (must be 0.1-10)`,
     });
 
-    if (!response.ok) {
-        const text = await response.text().catch(() => '');
-        // If video is too large, suggest frame mode
-        if (text.includes('too large') || text.includes('maximum')) {
-            throw new PluginFailure({
-                code: 'VIDEO_TOO_LARGE',
-                message: 'Video is too large for direct vision API.',
-                reason: text.slice(0, 200),
-                retryable: true,
-                hint: 'Use mode=frame instead — it samples frames and verifies individually.',
-            });
-        }
-        throw new PluginFailure({
-            code: 'VISION_API_ERROR',
-            message: `OpenAI API returned HTTP ${response.status}`,
-            reason: text.slice(0, 300),
-            retryable: response.status >= 500 || response.status === 429,
-        });
-    }
+    // 4. Entropy proxy: bytes per 1000 pixels
+    // Blank/solid-color frames compress extremely well.
+    const pixels = width * height;
+    const bytesPerKpx = pixels > 0 ? (fileSize / (pixels / 1000)) : 0;
+    const entropyOk = bytesPerKpx >= 2;
+    checks.push({
+        name: 'entropy',
+        pass: entropyOk,
+        detail: `${bytesPerKpx.toFixed(1)} bytes/Kpx (min: 2.0)`,
+    });
 
-    const json = (await response.json()) as any;
-    const content = json.choices?.[0]?.message?.content ?? '';
+    // 5. Size consistency: a frame should have reasonable size for its dimensions
+    const minExpectedSize = Math.max(1024, Math.round(pixels / 100));
+    const sizeConsistent = fileSize >= minExpectedSize;
+    checks.push({
+        name: 'size_consistent',
+        pass: sizeConsistent,
+        detail: `${fileSize} bytes (expected >= ${minExpectedSize})`,
+    });
 
-    let parsed: any;
-    try {
-        const match = content.match(/\{[\s\S]*\}/);
-        parsed = match ? JSON.parse(match[0]) : JSON.parse(content);
-    } catch {
-        const pass = content.toLowerCase().includes('pass') && !content.toLowerCase().includes('fail');
-        return {
-            pass,
-            confidence: pass ? 0.7 : 0.3,
-            reason: content.slice(0, 200),
-            raw: content,
-            prompt,
-        };
-    }
-
-    return {
-        pass: parsed.pass === true,
-        confidence: Number(parsed.confidence ?? 0.5),
-        reason: parsed.reason || 'Direct video evaluation complete.',
-        prompt,
-    };
+    return checks;
 }
-

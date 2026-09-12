@@ -163,7 +163,7 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 | `image.resize` | Resize an image to an explicit width/height (or fit within a box). | ts | `image/resize.ts` |
 | `image.rotate` | Rotate an image by an arbitrary angle (or 90° steps). | ts | `image/rotate.ts` |
 | `image.text` | Burn text onto an image (title card, caption, lower third). | ts | `image/text.ts` |
-| `image.verify` | Verify an image matches expected content using AI vision (OpenAI/Ollama) or heuristic checks. Returns PASS/FAIL with reasoning. | ts | `image/verify.ts` |
+| `image.verify` | Verify an image using deterministic checks (heuristic) or prepare a report for the agent to judge (agent mode). No external AI is called. | ts | `image/verify.ts` |
 | `image.watermark` | Overlay a watermark/logo image onto an image. | ts | `image/watermark.ts` |
 | `screen.shot` | Take one still screenshot of the desktop (or one window by title). | ts | `screen/shot.ts` |
 
@@ -243,7 +243,7 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 | `video.thumbnail` | Grab a single frame from a video as an image. | ts | `video/thumbnail.ts` |
 | `video.transform` | Animate a clip’s scale, position and rotation between keyframes, composited onto a background at a constant opacity. | ts | `video/transform.ts` |
 | `video.trim` | Cut a segment out of a video by start time and duration. | ts | `video/trim.ts` |
-| `video.verify` | Verify a video matches expected content by extracting frames and checking them. Rejects the video if any sampled frame fails. | ts | `video/verify.ts` |
+| `video.verify` | Verify a video by sampling frames and running deterministic checks (heuristic) or preparing frames for the agent to judge (agent mode). No external AI is called. | ts | `video/verify.ts` |
 | `video.watermark` | Overlay a logo/watermark image onto a video. | ts | `video/watermark.ts` |
 
 ## voice
