@@ -19,6 +19,17 @@ interface TimelineClip {
     transitionDuration?: number;
 }
 
+/** Formats ffmpeg treats as a single still rather than a stream. */
+const STILL_EXT = /\.(jpe?g|png|webp|bmp|tiff?|gif)$/i;
+const isStill = (p: string): boolean => STILL_EXT.test(path.extname(p));
+
+/**
+ * Default length for a still that arrives without an explicit `duration`.
+ * A still has no intrinsic length, so without this the timeline would have
+ * a zero-duration segment and every downstream xfade offset would collapse.
+ */
+const DEFAULT_STILL_SECONDS = 3;
+
 export default definePlugin({
     id: 'render.timeline',
     name: 'Render final timeline',
@@ -57,10 +68,16 @@ export default definePlugin({
             const c = clips[i];
             const src = requireFile(c.src, `clips[${i}].src`);
             const part = path.join(tmp, `c${i}.mp4`);
+            const still = isStill(src);
             const args = ['-y'];
-            if (c.start) args.push('-ss', String(c.start));
+            // A still must be looped or ffmpeg emits a single frame (and, for
+            // some sources, a file with no video stream at all). Seeking is
+            // meaningless on a still, so `-ss` is skipped for them too.
+            if (still) args.push('-loop', '1');
+            else if (c.start) args.push('-ss', String(c.start));
             args.push('-i', src);
-            if (c.duration) args.push('-t', String(c.duration));
+            const dur = c.duration ?? (still ? DEFAULT_STILL_SECONDS : undefined);
+            if (dur) args.push('-t', String(dur));
             args.push(
                 '-vf', `scale=${W}:${H}:force_original_aspect_ratio=decrease,pad=${W}:${H}:(ow-iw)/2:(oh-ih)/2:black,fps=${fps},settb=AVTB`,
                 '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-pix_fmt', 'yuv420p',
@@ -96,7 +113,9 @@ export default definePlugin({
                 } else {
                     const prevDur = 0; // computed below via async pass
                     void prevDur;
-                    chain += `[${prevLabel}][s${i}]xfade=transition=${t}:duration=${td}:offset=OFF${i}[x${i}];`;
+                    // @@ delimiters: a bare OFF1 token would also match OFF10
+                    // once a timeline has more than nine transitions.
+                    chain += `[${prevLabel}][s${i}]xfade=transition=${t}:duration=${td}:offset=@@OFF${i}@@[x${i}];`;
                     prevLabel = `x${i}`;
                 }
             }
@@ -104,10 +123,23 @@ export default definePlugin({
             let acc = 0;
             for (let i = 1; i < parts.length; i++) {
                 const prevDur = await durationOf(parts[i - 1]);
+                // A zero-length part makes every later offset collapse to 0,
+                // which renders as "matches no streams" deep inside ffmpeg —
+                // an unreadable failure. Catch it here and name the clip.
+                if (!(prevDur > 0)) {
+                    throw new PluginFailure({
+                        code: 'CLIP_UNREADABLE',
+                        message: `clips[${i - 1}] produced no usable video (0s, ${clips[i - 1].src}).`,
+                        reason: 'The clip could not be normalised — it is probably not a media file ffmpeg can decode.',
+                        input: { index: i - 1, src: clips[i - 1].src },
+                        retryable: true,
+                        hint: 'Check the file is a valid video or image. Stills are supported; give each one an explicit `duration`.',
+                    });
+                }
                 const t = clips[i].transition ?? 'cut';
                 const td = Number(clips[i].transitionDuration ?? 0.5);
                 acc += t && t !== 'cut' ? prevDur - td : prevDur;
-                chain = chain.replace(`OFF${i}`, Math.max(0, acc).toFixed(3));
+                chain = chain.replace(`@@OFF${i}@@`, Math.max(0, acc).toFixed(3));
             }
             const args = ['-y'];
             for (const p of parts) args.push('-i', p);
