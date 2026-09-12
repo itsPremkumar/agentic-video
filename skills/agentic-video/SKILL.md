@@ -46,7 +46,7 @@ next stage. Skip stages you do not need; do not reorder them.
 
 | # | Stage                    | Plugins                                                               |
 | - | ------------------------ | --------------------------------------------------------------------- |
-| 0 | Plan                     | `forge list`, `forge describe`                                        |
+| 0 | Plan                     | `forge list`, `forge describe`, `text.screenplay` (script to shots)    |
 | 0b | Proxies (long/4K footage)| `video.proxy` → cut → `edit.conform` → render from originals          |
 | 1 | Acquire stock media      | `image.download`, `video.download`, `music.download`                  |
 | 2 | Create media from markup | `image.create` (SVG / HTML+CSS), `image.canvas`                       |
@@ -59,7 +59,7 @@ next stage. Skip stages you do not need; do not reorder them.
 | 6c | Cut by transcript        | `voice.stt` → `edit.transcript_cut` (drop fillers, keep by keyword)    |
 | 6b | Beat-sync (optional)     | `audio.beat` → `edit.beat_cut` → hard cuts on the onsets              |
 | 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
-| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`   |
+| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`, `analyze.continuity` |
 
 ### Stage 1 — stock media
 
@@ -236,6 +236,8 @@ A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.js
 | Cut a clip                          | `video.trim`                                             | —                                           |
 | Check a file                        | `export.probe`                                           | —                                           |
 | Measure a picture before grading    | `analyze.scopes` (waveform/vectorscope/histogram)         | grading by eye                              |
+| Find the cuts that jolt             | `analyze.continuity` (luma/colour jumps per cut)         | watching it back and hoping                 |
+| Turn a screenplay into shots        | `text.screenplay` (scenes, shots, cast)                  | `text.script_parse` (cue blocks, not screenplay) |
 | Cut by what was said                | `voice.stt` → `edit.transcript_cut`                      | scrubbing manually                          |
 
 Full list: [references/plugin-catalogue.md](references/plugin-catalogue.md).

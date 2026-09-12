@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`text.screenplay`** — screenplay in, shot list out. The front of the pipeline, which was
+  missing entirely: `text.script_parse` handles cue-block scripts (`[Visual: ...]`), a different
+  format. This parses screenplay properly — INT./EXT. slug lines, character cues, parentheticals,
+  transitions — and produces scenes, shot-sized units with conservative camera suggestions,
+  estimated durations, and a cast list with line counts that maps onto `voice.dialogue` speakers.
+- **`analyze.continuity`** — nothing compared shots to *each other*. `analyze.video` checks one file
+  for black/freeze frames; `analyze.scene_audit` checks scenes against a manifest. Neither answers
+  whether an assembled cut holds together. This samples each shot and reports the luminance,
+  contrast, saturation and colour-balance delta at every cut, flagging the ones that will read as a
+  jolt. It is the measurement a colourist uses to decide what needs matching.
 - **`video.proxy` + `edit.conform`** — the offline/online split, which the toolkit had no
   representation of. `video.proxy` builds low-resolution editing stand-ins for a file or a folder
   and writes a manifest; `edit.conform` reads that manifest and rewrites a timeline so

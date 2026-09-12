@@ -193,6 +193,33 @@ Verified with an agent-authored composition using **nine packages**: `Transition
 local WAV via `Audio`, and a `Badge` component imported from a second file. 255 frames,
 1080x1080, h264/aac, no black frames.
 
+### The agentic-generation front end: `text.screenplay`
+
+State-of-the-art agentic video starts with *script understanding* — extract scenes, characters,
+action and beats, then plan shots. The toolkit had no representation of screenplay at all.
+
+`text.screenplay` parses INT./EXT. slug lines, character cues, parentheticals and transitions into
+scenes, shot-sized units with conservative camera suggestions, estimated durations, and a cast list
+with line counts. It is deterministic parsing, not shot design: it extracts what is on the page and
+leaves the covering decisions to the caller.
+
+Verified on a real three-scene screenplay: 3 scenes, 10 shots (5 action / 5 dialogue), cast of 3 with
+correct line counts, and camera sizes that match the text — "wide shot of the lab" → wide,
+"aerial view" → wide, "CLOSE ON:" → close, and a `(quietly)` parenthetical → close.
+
+The output is what feeds the rest: shots become footage to find or generate, and `cast` maps
+straight onto `voice.dialogue` speakers.
+
+### Consistency checking: `analyze.continuity`
+
+The SOTA pipelines run a *consistency check* across shots. Nothing here could compare shots to each
+other, so an assembled cut could not be judged. This reports the luma, contrast, saturation and
+colour-balance delta at every cut, with thresholds, and names the direction of the mismatch so you
+know which way to correct.
+
+Verified: on a three-shot sequence it found a real jump of +23.3 luma between shots 1 and 2, over a
+22 threshold, with the direction reported as "brighter".
+
 ### Offline/online: `video.proxy` + `edit.conform`
 
 The assistant-editor role existed nowhere in the toolkit. Now:

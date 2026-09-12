@@ -167,7 +167,7 @@ the code slug is `agenticvideo`.
 
 | Category | Count | Plugins |
 |---|---|---|
-| `analyze` | 10 | `analyze.scene_audit`, `analyze.scopes`, `analyze.video`, `audio.onset`, `image.aesthetic`, `image.dedup`, `image.relevance`, `text.script_parse`, `video.dedup`, `video.scene_detect` |
+| `analyze` | 12 | `analyze.continuity`, `analyze.scene_audit`, `analyze.scopes`, `analyze.video`, `audio.onset`, `image.aesthetic`, `image.dedup`, `image.relevance`, `text.screenplay`, `text.script_parse`, `video.dedup`, `video.scene_detect` |
 | `audio` | 16 | `audio.beat`, `audio.denoise`, `audio.duck`, `audio.eq`, `audio.fade`, `audio.info`, `audio.lufs_for_platform`, `audio.master`, `audio.merge`, `audio.mux`, `audio.normalize`, `audio.remove_silence`, `audio.sfx`, `audio.speed`, `audio.trim`, `audio.volume` |
 | `brand` | 3 | `brand.kit`, `text.hook`, `text.seo` |
 | `browser` | 2 | `browser.act`, `browser.open` |

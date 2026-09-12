@@ -1,11 +1,11 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 132 plugins, 17 categories.
+> 134 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
-- [analyze](#analyze) (10)
+- [analyze](#analyze) (12)
 - [audio](#audio) (16)
 - [brand](#brand) (3)
 - [browser](#browser) (2)
@@ -27,6 +27,7 @@
 
 | Plugin | What it does | Outputs |
 |---|---|---|
+| `analyze.continuity` | Measure brightness, contrast and colour across a sequence of shots and flag the cuts that will read as a jump. | data |
 | `analyze.scene_audit` | Per-scene probe + cross-check + final assembly QC. Returns a JSON audit report. | json |
 | `analyze.scopes` | Render a waveform, vectorscope and histogram for a frame, plus numeric signal statistics. | image, data |
 | `analyze.video` | QC report: black frames, freeze frames, audio peaks, codec/duration/aspect/fps. | json |
@@ -34,6 +35,7 @@
 | `image.aesthetic` | Returns a 0-5 score: +2 resolution >= 1280x720, +1 >= 1920x1080, +1 sane aspect ratio, +1 file size > 200KB, +1 valid bit-depth. No LLM. | json |
 | `image.dedup` | Compute dHash (9x8 grayscale, 64-bit) for each image, cluster via Hamming distance threshold. Returns groups so the agent can prune duplicates. | json |
 | `image.relevance` | Returns Jaccard similarity (0-1) between query keywords and image tag list. Pure set math, no LLM. | json |
+| `text.screenplay` | Parse a screenplay into scenes, shots, dialogue and a cast list, ready to drive production. | data |
 | `text.script_parse` | Splits a script into paragraphs + sentences, identifies [Visual:]/[Text:] cue blocks as scenes, and emits per-scene keywords and reading-time. | json |
 | `video.dedup` | Sample frames, dHash each (9x8 grayscale -> 64-bit), cluster near-duplicates via Hamming distance. Returns timestamped groups so the agent can dedup. | json |
 | `video.scene_detect` | Deterministic scene-change detection via ffmpeg select=gt(scene,TH). Returns cut times + optional smart re-assembly. | json |
