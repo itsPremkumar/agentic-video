@@ -1,7 +1,7 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 127 plugins, 17 categories.
+> 128 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
@@ -21,7 +21,7 @@
 - [subtitle](#subtitle) (5)
 - [transitions](#transitions) (1)
 - [video](#video) (25)
-- [voice](#voice) (11)
+- [voice](#voice) (12)
 
 ## analyze
 
@@ -224,6 +224,7 @@
 | Plugin | What it does | Outputs |
 |---|---|---|
 | `voice.clone` | Synthesise speech in a cloned voice using Coqui XTTS-v2. Requires 'pip install TTS' and a reference audio. | audio |
+| `voice.dialogue` | Synthesise a multi-speaker script into one sequenced audio track, with a different voice per speaker. | audio |
 | `voice.list_voices` | List available Edge-TTS voices, optionally filtered by locale (e.g. en-US). | data |
 | `voice.stt` | Transcribe speech from an audio/video file using faster-whisper. | data |
 | `voice.tts` | Synthesise natural speech to an MP3/WAV file using Edge-TTS. | audio |

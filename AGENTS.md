@@ -13,7 +13,7 @@ honestly.
 
 1. **Discover before you promise.**
    ```
-   forge list              # 127 plugins, no orchestration
+   forge list              # 128 plugins, no orchestration
    forge describe <id>     # exact inputs, defaults, enum, what each field means
    ```
    Read `forge describe` before you commit to a plugin. The defaults are
@@ -317,7 +317,7 @@ It is the fastest way to get oriented — start with `SKILL.md`.
 skills/agentic-video/
 ├── SKILL.md                       start here: the 8-stage master workflow
 ├── references/
-│   ├── plugin-catalogue.md        all 127 plugins by category  (generated)
+│   ├── plugin-catalogue.md        all 128 plugins by category  (generated)
 │   ├── remotion-templates.md      all 20 Remotion templates    (generated)
 │   ├── providers.md               stock / AI / TTS sources and keys
 │   ├── failure-codes.md           every failure code and what to do

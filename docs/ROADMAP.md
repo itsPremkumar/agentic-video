@@ -114,6 +114,51 @@ Only worth doing once the edit surface is stable enough that exporting it means 
 
 ---
 
+## Voice: the engine is complete, the control surface is not
+
+Worth stating precisely, because it is easy to misread.
+
+**The vendored Voicebox is complete.** `vendor/voicebox/speech/` is byte-identical to the
+reference integration in Automated Video Generator — same 99 files, same 18,341 lines of Python,
+**identical SHA-256 tree hash**. Eight TTS backends, database, MCP server, the lot. Nothing was
+trimmed.
+
+**But only ~7 of its ~60 endpoints are exposed as plugins:**
+
+| Voicebox area | Endpoints | Exposed |
+|---|---:|---|
+| `profiles`, `speak`, `models`, `health`, `history` | ~20 | ✅ `voice.voicebox_*` (7 plugins) |
+| **`stories`** — multi-track voice timeline | 14 | ❌ |
+| **`effects`** — 11 voice effects + presets + preview | 7 | ❌ |
+| **`channels`** — per-profile channels and voices | 5 | ❌ |
+| **`transcription`** — `/transcribe` | 1 | ❌ |
+| `captures` — voice-capture readiness | 6 | ❌ |
+| `llm`, `settings`, `tasks`, `export/import`, `versions` | ~10 | ❌ |
+
+The two that matter most are exactly the ones people ask for:
+
+- **`stories` is the multi-speaker engine.** `StoryItemDetail` carries `start_time_ms` and
+  `track`, with per-item `volume`, `trim`, `split`, `move`, `reorder` and `version` — a real
+  multi-track audio timeline. No plugin exposes it.
+- **`effects` is the voice-editing engine.** `utils/effects.py` defines `pitch_shift`,
+  `deep_voice`, `robotic`, `radio`, `reverb`, `chorus`, `delay`, `echo_chamber`, `compressor`,
+  `highpass`, `lowpass`, each with parameters (semitones, room_size, feedback, …). No plugin
+  exposes it.
+
+### What was added instead
+
+`voice.dialogue` — multi-speaker dialogue, built on the *existing* speech plugins rather than the
+unexposed API, so it works today with Edge-TTS (no 2–3 GB setup) and with Voicebox profiles when
+the backend is running. Verified: 4 lines across 3 voices, correctly sequenced with 5 silence
+gaps rather than mixed together.
+
+### The next step, when Voicebox is installed
+
+`voice.voicebox_stories` and `voice.voicebox_effects` are thin wrappers over endpoints that
+already exist in the vendored code. They are not written yet because `npm run setup:voicebox`
+(~2–3 GB) has not been run, and shipping wrappers that cannot be executed end to end would be
+guesswork — which is how the six wrong input names in the skill docs got there in the first place.
+
 ## What I would *not* build
 
 - **An orchestrator.** The whole point is that the caller decides. AVG's ADR 001 chose the
