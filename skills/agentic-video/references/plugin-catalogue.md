@@ -170,7 +170,7 @@
 |---|---|---|
 | `motion.canvas` | Render an HTML5 Canvas animation to MP4/WebM by sampling one frame at a time. Supports optional audio, alpha (webm), and custom frame functions. | video |
 | `motion.effect` | Ken Burns zoom/pan, handheld shake, parallax drift, punch-in/out. Works on stills (with duration) or clips. | video |
-| `motion.remotion` | Bundle and render a caller-authored Remotion (React) composition. The composition code can use the full Remotion API: useFrame, spring, interpolate, transitions, shapes, paths, captions, kinetic text, etc. | video |
+| `motion.remotion` | Bundle and render a caller-authored Remotion (React) composition. Full Remotion API plus the companion packages (transitions, paths, shapes, noise, layout-utils, animation-utils, google-fonts). Pass local media via `assets` and use staticFile() to reference it. | video |
 | `motion.remotion_template` | Render a prebuilt Remotion composition (lower-third, title-card, end-cta, countdown, progress-bar, kinetic-text, bar-chart, logo-reveal, spectrum, confetti, stat-counter, quote-card, split-screen, typewriter, timeline, list-reveal, waveform, glitch-title, testimonial, product-card) by name. | video |
 | `render.slideshow` | Render a sequence of images into a video, with optional Ken Burns motion and audio. | video |
 | `render.timeline` | Assemble an explicit list of clips (+ optional audio and subtitles) into the final video. | video |

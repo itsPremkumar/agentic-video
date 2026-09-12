@@ -166,6 +166,33 @@ the final file's level matches the intermediate part to the decimal.
 Two bugs fixed on the way: `audioVolume` was declared but **never used**, and an external audio bed
 could be silently ignored because no `-map` was given.
 
+### Remotion: it was core-only, now it is the real thing
+
+`motion.remotion` claimed "the full Remotion API". It was not true, and the reason was subtle.
+
+**Only `remotion` and `react` were importable.** `@remotion/bundler`'s webpack config sets
+explicit aliases for those two and **no `resolve.modules`**, so every other import is resolved by
+walking up from the entry point. The bundle was built in `%TEMP%`, which has no `node_modules`
+above it — so a package could be installed and still be unreachable. Any composition importing
+`@remotion/transitions` failed to bundle.
+
+Two further gaps: `publicDir` was created and **never populated**, so `staticFile()` could not
+resolve a single local asset; and the bundle was one file, so a composition could not be split
+into modules.
+
+Fixed:
+- the bundle now builds under the project root, putting the real `node_modules` in the walk-up path
+- seven companion packages installed: `transitions`, `paths`, `shapes`, `noise`, `layout-utils`,
+  `animation-utils`, `google-fonts`
+- new `assets` input copies local media into `publicDir`, so `staticFile()` works
+- new `files` input writes extra modules, so a composition can be more than one file
+
+Verified with an agent-authored composition using **nine packages**: `TransitionSeries` with
+`fade`/`slide`/`wipe`, `evolvePath` + `getLength` for SVG path drawing, `Star`/`Circle` shapes,
+`noise2D` for organic drift, `fitText`, `makeTransform`, a local PNG via `staticFile` + `Img`, a
+local WAV via `Audio`, and a `Badge` component imported from a second file. 255 frames,
+1080x1080, h264/aac, no black frames.
+
 ### The next step, when Voicebox is installed
 
 `voice.voicebox_stories` and `voice.voicebox_effects` are thin wrappers over endpoints that

@@ -1,10 +1,9 @@
 import * as fs from 'node:fs';
-import * as os from 'node:os';
 import * as path from 'node:path';
-import { resolveOutPath } from '../../_shared/common.ts';
 import { definePlugin, PluginFailure } from '../../../core/define.ts';
+import { projectRoot } from '../../../core/env.ts';
 import { findChrome } from '../../../core/browser.ts';
-import { S } from '../../_shared/common.ts';
+import { S, resolveOutPath, requireFile } from '../../_shared/common.ts';
 
 /**
  * motion.remotion - render ANY motion graphics composition the caller authors
@@ -20,7 +19,7 @@ export default definePlugin({
     name: 'Render a Remotion composition',
     category: 'render',
     description:
-        'Bundle and render a caller-authored Remotion (React) composition. The composition code can use the full Remotion API: useFrame, spring, interpolate, transitions, shapes, paths, captions, kinetic text, etc.',
+        'Bundle and render a caller-authored Remotion (React) composition. Full Remotion API plus the companion packages (transitions, paths, shapes, noise, layout-utils, animation-utils, google-fonts). Pass local media via `assets` and use staticFile() to reference it.',
     inputs: {
         composition: S.string(
             'TSX source code for the composition. Must have a default-exported React component.',
@@ -32,6 +31,11 @@ export default definePlugin({
         width: S.int('Output width', { default: 1080, minimum: 1 }),
         height: S.int('Output height', { default: 1920, minimum: 1 }),
         props: S.object('Default props passed to the composition (JSON object)'),
+        assets: S.array(
+            'Local files to make available to staticFile(). Array of paths, or {src, as} to rename.',
+            { default: [] },
+        ),
+        files: S.object('Extra source files: map of relative path -> TSX/TS source, so Composition.tsx can import them'),
         out: S.string('Output file name (.mp4)', { default: 'remotion.mp4' }),
     },
     outputs: ['video'],
@@ -67,14 +71,68 @@ export default definePlugin({
             });
         }
 
-        const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'vf-remotion-'));
+        // The bundle directory MUST live inside the project tree.
+        //
+        // @remotion/bundler's webpack config aliases `react` and `remotion`
+        // explicitly but sets no `resolve.modules`, so every other import is
+        // resolved by walking up from the entry point. A temp dir under %TEMP%
+        // has no node_modules above it, which means `import { TransitionSeries }
+        // from '@remotion/transitions'` fails to bundle — the package is
+        // installed and still unreachable. Sitting under the project root puts
+        // the real node_modules in the walk-up path.
+        const bundleRoot = path.join(projectRoot(), 'workspace', '.tmp');
+        fs.mkdirSync(bundleRoot, { recursive: true });
+        const dir = fs.mkdtempSync(path.join(bundleRoot, 'remotion-'));
         try {
             fs.writeFileSync(
                 path.join(dir, 'package.json'),
                 JSON.stringify({ name: 'vf-remotion-tmp', version: '0.0.0', private: true, type: 'module' }),
             );
             fs.mkdirSync(path.join(dir, 'src'), { recursive: true });
+            fs.mkdirSync(path.join(dir, 'public'), { recursive: true });
             fs.writeFileSync(path.join(dir, 'src', 'Composition.tsx'), src.replace(/\r\n/g, '\n'));
+
+            // Extra modules, so a composition can be more than one file. Keys are
+            // paths relative to src/, so Composition.tsx can `import` them.
+            const files = (input.files && typeof input.files === 'object' ? input.files : {}) as Record<string, unknown>;
+            for (const [rel, body] of Object.entries(files)) {
+                const target = path.resolve(dir, 'src', rel);
+                // Never let a caller write outside the bundle directory.
+                if (!target.startsWith(path.resolve(dir, 'src') + path.sep)) {
+                    throw new PluginFailure({
+                        code: 'INVALID_INPUT',
+                        message: `files["${rel}"] would escape the bundle directory.`,
+                        input: { key: rel },
+                        retryable: true,
+                        hint: 'Use a path relative to src/, e.g. "components/Badge.tsx".',
+                    });
+                }
+                fs.mkdirSync(path.dirname(target), { recursive: true });
+                fs.writeFileSync(target, String(body).replace(/\r\n/g, '\n'));
+            }
+
+            // Assets go into publicDir so staticFile('name') resolves. Without
+            // this a composition cannot use a single local image, video, audio
+            // file or font — the publicDir was created empty and never filled.
+            const assets = Array.isArray(input.assets) ? (input.assets as unknown[]) : [];
+            for (const [i, entry] of assets.entries()) {
+                const from = typeof entry === 'string' ? entry : String((entry as Record<string, unknown>)?.src ?? '');
+                if (!from) continue;
+                const as = typeof entry === 'string' ? path.basename(from) : String((entry as Record<string, unknown>)?.as ?? path.basename(from));
+                const source = requireFile(from, `assets[${i}]`);
+                const target = path.resolve(dir, 'public', as);
+                if (!target.startsWith(path.resolve(dir, 'public') + path.sep)) {
+                    throw new PluginFailure({
+                        code: 'INVALID_INPUT',
+                        message: `assets[${i}].as would escape the public directory.`,
+                        input: { as },
+                        retryable: true,
+                        hint: 'Use a plain file name, e.g. "logo.png".',
+                    });
+                }
+                fs.mkdirSync(path.dirname(target), { recursive: true });
+                fs.copyFileSync(source, target);
+            }
             const root =
                 "import { Composition } from 'remotion';\nimport Composition_ from './Composition';\n\nexport const RemotionRoot = () => {\n    return (\n        <Composition\n            id=\"" + compId + "\"\n            component={Composition_}\n            durationInFrames={" + dur + "}\n            fps={" + fps + "}\n            width={" + width + "}\n            height={" + height + "}\n            defaultProps={" + JSON.stringify(defaultProps) + "}\n        />\n    );\n};\n";
             fs.writeFileSync(path.join(dir, 'src', 'Root.tsx'), root);
