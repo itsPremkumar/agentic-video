@@ -47,11 +47,13 @@ honestly.
    NOT executed. If you want to continue past a failure, run the remaining
      
    steps explicitly yourself.
-6. **Verify after you render.** Use `export.probe` to confirm duration,
+6. **Verify after you render — technically AND content-wise.** Use `export.probe` to confirm duration,
      
-   resolution, codec, audio, and zero black frames. Visually inspect a few
-     
-   frames (`export.contact_sheet` is cheap and helpful).
+   resolution, codec, audio, and zero black frames. Then use `image.verify` or `video.verify` to
+   
+   confirm the media actually contains what you asked for. If verification fails, reject and regenerate.
+   
+   Never use unverified media in a final render.
 
 
 ## Plugin selection cheatsheet
@@ -67,6 +69,8 @@ honestly.
 | Cluster near-duplicate images    | `image.dedup` (dHash + Hamming)                                                       | zero-dep, fast                      |
 | Score image quality (0-5)        | `image.aesthetic` (resolution + aspect + size + bitdepth)                             | no-LLM                              |
 | Auto-pick best thumbnail frame   | `image.best_frame` (sharpness + contrast + face detection)                            | samples across video                |
+| Verify image content (AI vision) | `image.verify` (openai/ollama/heuristic)                                              | rejects bad generations             |
+| Verify video content             | `video.verify` (frame extraction + image.verify)                                      | rejects bad renders                 |
 | Tag relevance vs script          | `image.relevance` (Jaccard token overlap)                                             | pure set math                       |
 | Get a stock video                | `video.download` (pexels / pixabay / wikimedia)                                       | pexels+pixabay need keys            |
 | Stills -> video (Ken Burns)      | `video.from_images`                                                                   | local ffmpeg, no key                |

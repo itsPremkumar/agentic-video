@@ -1,33 +1,35 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 142 plugins, 17 categories.
+> 154 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
-- [analyze](#analyze) (13)
-- [audio](#audio) (16)
+- [analyze](#analyze) (15)
+- [audio](#audio) (18)
 - [brand](#brand) (3)
 - [browser](#browser) (2)
 - [distribute](#distribute) (6)
-- [edit](#edit) (6)
+- [edit](#edit) (7)
 - [effects](#effects) (6)
 - [export](#export) (7)
 - [fx](#fx) (7)
-- [image](#image) (18)
+- [image](#image) (20)
 - [music](#music) (2)
 - [qc](#qc) (3)
 - [render](#render) (6)
 - [subtitle](#subtitle) (5)
 - [transitions](#transitions) (1)
-- [video](#video) (28)
-- [voice](#voice) (13)
+- [video](#video) (32)
+- [voice](#voice) (14)
 
 ## analyze
 
 | Plugin | What it does | Outputs |
 |---|---|---|
+| `analyze.chapters` | Analyze a transcript and generate chapter markers at topic boundaries. | data |
 | `analyze.continuity` | Measure brightness, contrast and colour across a sequence of shots and flag the cuts that will read as a jump. | data |
+| `analyze.highlights` | Analyze video/audio to detect the most engaging moments. Returns ranked clip suggestions with timestamps and confidence scores. | data |
 | `analyze.scene_audit` | Per-scene probe + cross-check + final assembly QC. Returns a JSON audit report. | json |
 | `analyze.scopes` | Render a waveform, vectorscope and histogram for a frame, plus numeric signal statistics. | image, data |
 | `analyze.search` | Find a phrase across one or more transcripts and return the timecodes where it occurs. | data |
@@ -56,7 +58,9 @@
 | `audio.merge` | Mix two or more audio files together (e.g. voiceover + background music). | audio |
 | `audio.mux` | Replace a video's audio track, and optionally keep the original audio mixed underneath. | video |
 | `audio.normalize` | Apply EBU R128 loudness normalization (loudnorm) to an audio file. | audio |
+| `audio.remove_fillers` | Take audio + transcript, detect filler words, and output a cleaned audio file with gaps tightened. | audio |
 | `audio.remove_silence` | Cut silent passages out of an audio file. | audio |
+| `audio.separate` | Separate mixed audio into voice, music, and SFX stems using Demucs. | audio |
 | `audio.sfx` | Deterministic SFX from ffmpeg signal sources (blip, click, whoosh, riser, impact, boom, chime, pad, wind, rain, swoosh, glitch, laser, ...). | audio |
 | `audio.speed` | Speed up or slow down audio while preserving pitch (atempo). | audio |
 | `audio.trim` | Cut a segment out of an audio file. | audio |
@@ -93,6 +97,7 @@
 | Plugin | What it does | Outputs |
 |---|---|---|
 | `edit.beat_cut` | Convert an audio.beat grid into an explicit clip list for render.timeline, so every cut lands on an onset (or beat). | data |
+| `edit.broll` | Read a transcript, identify narrative segments, search stock libraries, and return a timeline with B-roll clips overlaid at matching timecodes. | data |
 | `edit.conform` | Relink a timeline cut against proxies back to the original media, verifying the swap is valid. | data |
 | `edit.match` | Measure each shot against a reference and apply a luminance, contrast, saturation and gamma correction towards it. | video, data |
 | `edit.ops` | Apply a batch of timeline operations (delete/insert/reorder/update/retime) to a JSON timeline spec. Returns the new timeline + a log of applied ops. | json |
@@ -141,6 +146,7 @@
 | `browser.mockup` | Render a URL or local HTML inside a browser-window or phone frame on a styled background. | image |
 | `browser.screenshot` | Render a URL or local HTML file in headless Chromium and save it as PNG/JPG. | image |
 | `browser.scroll_capture` | Scroll a page in even steps, screenshotting the viewport at each stop. Good for Ken Burns pans and long-page QA. | image, json |
+| `image.best_frame` | Analyze frames across a video and return the best thumbnail candidates scored for faces, sharpness, contrast, and composition. | data |
 | `image.canvas` | Draw into a real HTML5 canvas with caller-supplied JavaScript and save the result as an image. | image |
 | `image.convert` | Convert an image to another format, optionally setting JPEG quality. | image |
 | `image.create` | Rasterise SVG or HTML+CSS markup into a PNG/JPG image using a real browser engine. | image |
@@ -154,6 +160,7 @@
 | `image.resize` | Resize an image to an explicit width/height (or fit within a box). | image |
 | `image.rotate` | Rotate an image by an arbitrary angle (or 90° steps). | image |
 | `image.text` | Burn text onto an image (title card, caption, lower third). | image |
+| `image.verify` | Verify an image matches expected content using AI vision (OpenAI/Ollama) or heuristic checks. Returns PASS/FAIL with reasoning. | data |
 | `image.watermark` | Overlay a watermark/logo image onto an image. | image |
 | `screen.shot` | Take one still screenshot of the desktop (or one window by title). | image |
 
@@ -207,10 +214,13 @@
 | `browser.record_flow` | Record video of a website while driving it (navigate, scroll, click, type). Produces MP4 via Playwright + ffmpeg. | video, json |
 | `screen.record` | Capture the desktop (or one window by title) to MP4 using the platform screen-grabber. | video |
 | `video.animate` | Animate a still image into a short motion clip using a local ComfyUI server with AnimateDiff. Needs ComfyUI running — for the no-dependency path use video.from_images. | video |
+| `video.auto_reframe` | Content-aware reframing that detects faces and positions the crop window to keep subjects in frame. Converts 16:9 → 9:16 and other ratios. | video |
 | `video.crop` | Crop a video to a rectangle, or to an aspect ratio with auto-centering. | video |
 | `video.download` | Search and download stock video clips from pexels \| pixabay \| wikimedia. | video |
 | `video.extract_audio` | Pull the audio track out of a video into an audio file. | audio |
 | `video.extract_frames` | Export still images from a video — every N seconds, a fixed count, or at explicit timestamps. | image |
+| `video.eye_contact` | Correct eye gaze in talking-head videos so speakers appear to look at camera. Basic implementation using OpenCV face landmarks. | video |
+| `video.face_blur` | Detect faces in video and apply tracked blur or pixelate overlay for privacy protection. | video |
 | `video.fade` | Add a fade from/to black at the start and/or end of a clip. | video |
 | `video.from_images` | Convert still images into a video with optional Ken Burns motion and crossfade transitions. Local ffmpeg — no API key. (For AI motion see video.generate.) | video |
 | `video.generate` | Create a video via fal.ai text-to-video or image-to-video. Requires FAL_KEY. | video |
@@ -230,6 +240,7 @@
 | `video.thumbnail` | Grab a single frame from a video as an image. | image |
 | `video.transform` | Animate a clip’s scale, position and rotation between keyframes, composited onto a background at a constant opacity. | video |
 | `video.trim` | Cut a segment out of a video by start time and duration. | video |
+| `video.verify` | Verify a video matches expected content by extracting frames and checking them. Rejects the video if any sampled frame fails. | data |
 | `video.watermark` | Overlay a logo/watermark image onto a video. | video |
 
 ## voice
@@ -238,6 +249,7 @@
 |---|---|---|
 | `voice.clone` | Synthesise speech in a cloned voice using Coqui XTTS-v2. Requires 'pip install TTS' and a reference audio. | audio |
 | `voice.dialogue` | Synthesise a multi-speaker script into one sequenced audio track, with a different voice per speaker. | audio |
+| `voice.diarize` | Transcribe speech and identify who spoke when. Returns per-segment speaker labels. | data |
 | `voice.dub` | Replace dialogue with synthesised speech at the original cue timings, for localisation or ADR. | audio |
 | `voice.list_voices` | List available Edge-TTS voices, optionally filtered by locale (e.g. en-US). | data |
 | `voice.stt` | Transcribe speech from an audio/video file using faster-whisper. | data |

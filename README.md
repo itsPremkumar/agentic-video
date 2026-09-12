@@ -176,13 +176,13 @@ the code slug is `agenticvideo`.
 | `effects` | 6 | `effects.color_grade`, `effects.look`, `effects.style`, `effects.video`, `image.remove_bg`, `video.denoise` |
 | `export` | 7 | `browser.extract`, `browser.pdf`, `export.contact_sheet`, `export.gif`, `export.platform`, `export.probe`, `export.reframe` |
 | `fx` | 7 | `effects.genre`, `fx.chroma_key`, `fx.compare`, `fx.speed_ramp`, `fx.stabilize`, `fx.transition_effect`, `fx.vintage` |
-| `image` | 19 | `browser.mockup`, `browser.screenshot`, `browser.scroll_capture`, `image.best_frame`, `image.canvas`, `image.convert`, `image.create`, `image.crop`, `image.download`, `image.filter`, `image.flip`, `image.generate`, `image.grade`, `image.info`, `image.resize`, `image.rotate`, `image.text`, `image.watermark`, `screen.shot` |
+| `image` | 20 | `browser.mockup`, `browser.screenshot`, `browser.scroll_capture`, `image.best_frame`, `image.canvas`, `image.convert`, `image.create`, `image.crop`, `image.download`, `image.filter`, `image.flip`, `image.generate`, `image.grade`, `image.info`, `image.resize`, `image.rotate`, `image.text`, `image.verify`, `image.watermark`, `screen.shot` |
 | `music` | 2 | `music.download`, `music.generate` |
 | `qc` | 3 | `qc.asset`, `qc.gate`, `qc.placeholder_check` |
 | `render` | 6 | `motion.canvas`, `motion.effect`, `motion.remotion`, `motion.remotion_template`, `render.slideshow`, `render.timeline` |
 | `subtitle` | 5 | `subtitle.burn`, `subtitle.convert`, `subtitle.create`, `subtitle.karaoke`, `subtitle.syllable` |
 | `transitions` | 1 | `transitions.xfade` |
-| `video` | 31 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.auto_reframe`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.eye_contact`, `video.face_blur`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.mask`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.retime`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
+| `video` | 32 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.auto_reframe`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.eye_contact`, `video.face_blur`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.mask`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.retime`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.verify`, `video.watermark` |
 | `voice` | 14 | `voice.clone`, `voice.dialogue`, `voice.diarize`, `voice.dub`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
 <!-- END GENERATED: categories -->
 

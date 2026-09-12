@@ -1,6 +1,6 @@
 # Agentic Video
 
-A **passive** video toolkit. It has 130 plugins and **no orchestrator** — it never decides,
+A **passive** video toolkit. It has 154 plugins and **no orchestrator** — it never decides,
   
 retries or substitutes. You are the intelligence. It is the hands.
 
@@ -8,7 +8,7 @@ That is the whole deal. Everything below follows from it.
 
 ---
 
-## The three rules
+## The four rules
 
 1. **Describe before you promise.** `forge describe <id>` prints exact inputs, defaults and
      
@@ -17,6 +17,10 @@ That is the whole deal. Everything below follows from it.
 3. **A failure is information, not a setback.** Read `code` and `retryable`:
    - `retryable: true` → fix the input and re-run that one step.
    - `retryable: false` → re-running cannot help; fix the environment (key, binary, file).
+4. **Verify everything you generate.** After `image.generate`, `image.create`, `motion.remotion`,
+   `render.timeline`, or any media creation: run `image.verify` or `video.verify`. If it fails,
+   reject the output, read the reason, fix the upstream step, and regenerate. Never use
+   unverified media in a final render.
 
 **Never substitute a different plugin to make a failure go away.** That is the one thing this
   
@@ -28,9 +32,11 @@ toolkit exists to prevent.
 
 ```bash
 cd <path-to>/agentic-video
-npm run forge list              # must print 130 plugins
+npm run forge list              # must print 154 plugins
 ffmpeg -version                 # required for almost everything
 cp .env.example .env            # add PEXELS_API_KEY — see references/providers.md
+# Optional: OPENAI_API_KEY for AI-powered image/video verification (image.verify / video.verify)
+# Optional: OLLAMA_URL for local vision model verification
 npx playwright install chromium # only if you use browser.* plugins
 ```
 
@@ -59,7 +65,8 @@ next stage. Skip stages you do not need; do not reorder them.
 | 6c | Cut by transcript        | `voice.stt` → `edit.transcript_cut` (drop fillers, keep by keyword)    |
 | 6b | Beat-sync (optional)     | `audio.beat` → `edit.beat_cut` → hard cuts on the onsets              |
 | 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
-| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`, `analyze.continuity` |
+| 8 | Technical verify         | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`, `analyze.continuity` |
+| 9 | Content verify           | `image.verify` (after ANY image gen/edit), `video.verify` (after ANY video render)       |
 
 ### Stage 1 — stock media
 
@@ -172,7 +179,7 @@ npm run forge -- run render.timeline --json timeline.json
 npm run forge -- run video.merge --json merge.json          # {sources:[...]} — plain concat
 ```
 
-### Stage 8 — verify, always
+### Stage 8 — technical verify, always
 
 ```bash
 npm run forge -- run export.probe --input src=final.mp4
@@ -183,6 +190,35 @@ npm run forge -- run export.contact_sheet --input file=final.mp4 --input cols=4 
 `export.probe` returns **nested** `{video:{codec,width,height,fps}, audio:{codec}}` — not a
   
 `streams` array.
+
+### Stage 9 — content verify (after every generation)
+
+**Every image or video you generate MUST be verified before use.** Technical checks (Stage 8)
+confirm the file is valid; content checks confirm it actually shows what you asked for.
+
+```bash
+# After image.generate, image.create, image.download, or any image edit:
+npm run forge -- run image.verify --input src=card.png \
+  --input prompt="a red sports car on a beach at sunset" \
+  --input engine=heuristic
+
+# For AI-powered verification (needs OPENAI_API_KEY):
+npm run forge -- run image.verify --input src=card.png \
+  --input prompt="a red sports car on a beach at sunset" \
+  --input engine=openai --input model=gpt-4o-mini
+
+# After video.generate, motion.remotion, render.timeline, or any video render:
+npm run forge -- run video.verify --input src=final.mp4 \
+  --input prompt="a 10-second product showcase with smooth transitions" \
+  --input engine=heuristic --input samples=5
+```
+
+**Verification rules:**
+- `engine=heuristic` — zero deps, checks file size, dimensions, entropy (not blank). Always works.
+- `engine=openai` — needs `OPENAI_API_KEY`, uses GPT-4o for actual content matching. Most accurate.
+- `engine=ollama` — needs local ollama with vision model (e.g. `ollama pull llava`). Private.
+- `strict=true` (default) — one failed frame = entire video rejected. Regenerate.
+- On FAIL: read the `reason`, fix the prompt or upstream step, and regenerate. Never use unverified media.
 
 ---
 
@@ -205,7 +241,9 @@ rather than starting from scratch.
 9. audio.merge / audio.duck   bed under narration            → mix
 10. subtitle.create + subtitle.burn                          → captions
 11. render.timeline      all clips, xfade between            → assembly
-12. export.probe + qc.gate                                   → verify
+12. export.probe + qc.gate                                   → technical verify
+13. image.verify (on each generated image)                    → content verify images
+14. video.verify (on the final render)                        → content verify video
 ```
 
 A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.json).
