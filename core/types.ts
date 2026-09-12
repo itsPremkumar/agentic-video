@@ -23,7 +23,8 @@ export type PluginCategory =
     | 'brand'
     | 'fx'
     | 'distribute'
-    | 'edit';
+    | 'edit'
+    | 'browser';
 
 export type ArtifactKind = 'image' | 'video' | 'audio' | 'subtitle' | 'data' | 'text' | 'json';
 
