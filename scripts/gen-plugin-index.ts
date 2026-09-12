@@ -12,6 +12,7 @@ import * as path from 'node:path';
 import { loadPlugins } from '../core/loader.ts';
 import { all } from '../core/registry.ts';
 import { projectRoot } from '../core/env.ts';
+import { pathByPluginId } from './lib/plugin-paths.ts';
 
 const OUT = path.join(projectRoot(), 'plugins', 'INDEX.md');
 const README = path.join(projectRoot(), 'README.md');
@@ -41,33 +42,9 @@ function updateReadmeCategories(rows: { category: string; plugins: string[] }[])
     return true;
 }
 
-/**
- * Map plugin id -> path relative to plugins/.
- *
- * The registry does not carry the source file, so read it back off the tree —
- * the same source of truth the loader uses.
- */
-function pathByPluginId(): Map<string, string> {
-    const dir = path.join(projectRoot(), 'plugins');
-    const out = new Map<string, string>();
-    const walk = (d: string): void => {
-        for (const e of fs.readdirSync(d, { withFileTypes: true })) {
-            const p = path.join(d, e.name);
-            if (e.isDirectory()) walk(p);
-            else if (/\.(ts|py)$/.test(e.name)) {
-                const src = fs.readFileSync(p, 'utf8');
-                const m = src.match(/id:\s*['"]([a-zA-Z0-9_.]+)['"]/);
-                if (m) out.set(m[1], path.relative(dir, p).replace(/\\/g, '/'));
-            }
-        }
-    };
-    walk(dir);
-    return out;
-}
-
 async function main(): Promise<void> {
     await loadPlugins();
-    const files = pathByPluginId();
+    const files = pathByPluginId(path.join(projectRoot(), 'plugins'));
     const plugins = all().slice().sort((a, b) => a.manifest.id.localeCompare(b.manifest.id));
 
     const groups = new Map<string, typeof plugins>();

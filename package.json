@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit",
     "plugins": "tsx bin/forge.ts list",
     "gen:index": "tsx scripts/gen-plugin-index.ts",
+    "check": "tsx scripts/check-plugins.ts",
+    "test": "npm run typecheck && npm run check",
     "setup:voicebox": "node scripts/setup-voicebox.mjs"
   },
   "devDependencies": {

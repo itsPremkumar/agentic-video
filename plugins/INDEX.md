@@ -91,7 +91,7 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 | `effects.look` | Apply a named colour grade (cinematic, vivid, neon, teal-orange, bleach, warm, cool, bw, sepia, vintage) to a video or image. | ts | `effects/look.ts` |
 | `effects.style` | Full look recipe (grade + grain + vignette + sharpening): noir, sunset, cyberpunk, golden, arctic, moody, pastelDream, horrorDesat, documentary, hdr, muted, neonNight. | ts | `effects/style.ts` |
 | `effects.video` | Apply a named effect to a video. Supported: film-grain, vignette, letterbox, mirror, black-white, color-pop, blur, sharpen, shake, zoom-punch, edge-glow, slow-shutter | ts | `effects/video.ts` |
-| `image.remove_bg` | Local rembg (U-2-Net / ISNet) background removal. Writes a PNG with alpha. | py | `?` |
+| `image.remove_bg` | Local rembg (U-2-Net / ISNet) background removal. Writes a PNG with alpha. | py | `image/remove_bg.json` |
 | `video.denoise` | Spatial + temporal denoise (hqdn3d). Optional chroma-only mode to keep skin tones clean. | ts | `video/denoise.ts` |
 
 ## export
@@ -110,9 +110,9 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 | id | what it does | engine | file |
 | --- | --- | --- | --- |
 | `effects.genre` | Applies a single coherent genre look via a tuned ffmpeg filter chain. 14 packs: cinematic, anime, retro-80s, lofi, documentary, vintage-film, cyberpunk, vhs, scifi-clean, horror, news-broadcast, music-video, dream-soft, noir, pop-commercial. | ts | `effects/genre.ts` |
-| `fx.chroma_key` | Remove a colour from the background of a clip. Outputs WebM with alpha or mp4 over a coloured background. | ts | `fx/chromaKey.ts` |
+| `fx.chroma_key` | Remove a colour from the background of a clip. Outputs WebM with alpha or mp4 over a coloured background. | ts | `fx/chroma_key.ts` |
 | `fx.compare` | Pick the same timestamp from N input videos, scale each to 480x270, tile into a 2-column (or N-column) contact sheet, draw each label. Deterministic, no overlay alignment needed. | ts | `fx/compare.ts` |
-| `fx.speed_ramp` | Constant speed, accelerate, decelerate, punch-in, or punch-out via setpts+tpad. | ts | `fx/speedRamp.ts` |
+| `fx.speed_ramp` | Constant speed, accelerate, decelerate, punch-in, or punch-out via setpts+tpad. | ts | `fx/speed_ramp.ts` |
 | `fx.stabilize` | Two-pass vidstab stabilisation (detect + transform) for handheld clips. | ts | `fx/stabilize.ts` |
 | `fx.transition_effect` | Time-windowed transition effects: glitch, lightLeak, whipPan, flash, rgbSplit, zoomBlur. Split-concat windowing means every filter works, even ones without timeline support. | ts | `fx/transition_effect.ts` |
 | `fx.vintage` | Vintage, sepia, bleach, noir, polaroid, 70s, 80s, VHS, dreamy, cold, warm, punchy, pastel, or mono. | ts | `fx/vintage.ts` |
@@ -144,7 +144,7 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 | id | what it does | engine | file |
 | --- | --- | --- | --- |
 | `music.download` | Download CC-licensed music from internet-archive. | ts | `music/download.ts` |
-| `music.generate` | Synthesise a simple royalty-free background track (WAV) procedurally. | py | `?` |
+| `music.generate` | Synthesise a simple royalty-free background track (WAV) procedurally. | py | `music/generate.py` |
 
 ## qc
 
@@ -213,10 +213,10 @@ Sub-systems get a sub-folder: `voice.voicebox_health` → `voice/voicebox/health
 
 | id | what it does | engine | file |
 | --- | --- | --- | --- |
-| `voice.clone` | Synthesise speech in a cloned voice using Coqui XTTS-v2. Requires 'pip install TTS' and a reference audio. | py | `?` |
-| `voice.list_voices` | List available Edge-TTS voices, optionally filtered by locale (e.g. en-US). | py | `?` |
-| `voice.stt` | Transcribe speech from an audio/video file using faster-whisper. | py | `?` |
-| `voice.tts` | Synthesise natural speech to an MP3/WAV file using Edge-TTS. | py | `?` |
+| `voice.clone` | Synthesise speech in a cloned voice using Coqui XTTS-v2. Requires 'pip install TTS' and a reference audio. | py | `voice/clone.py` |
+| `voice.list_voices` | List available Edge-TTS voices, optionally filtered by locale (e.g. en-US). | py | `voice/list_voices.py` |
+| `voice.stt` | Transcribe speech from an audio/video file using faster-whisper. | py | `voice/stt.py` |
+| `voice.tts` | Synthesise natural speech to an MP3/WAV file using Edge-TTS. | py | `voice/tts.py` |
 | `voice.voicebox_clone` | Create a cloned Voicebox voice profile from reference audio + transcript. Returns a profile id you can speak through. | ts | `voice/voicebox/clone.ts` |
 | `voice.voicebox_health` | Ping the local Voicebox TTS server (default http://localhost:17493) and report its health. | ts | `voice/voicebox/health.ts` |
 | `voice.voicebox_history` | List / search Voicebox generations, read stats, or re-download the audio of a previous generation by id. | ts | `voice/voicebox/history.ts` |

@@ -1,0 +1,22 @@
+# Normalise line endings on check-in; check out with the platform's native
+# endings. Without this, every file committed on Windows produces an
+# "LF will be replaced by CRLF" warning and diffs pick up whole-file churn.
+* text=auto eol=crlf
+
+# Binary — never touch, never diff.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.mp4  binary
+*.mp3  binary
+*.wav  binary
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.pdf  binary
+
+# Generated lockfiles — keep them out of diffs and blame.
+package-lock.json linguist-generated=true -diff
