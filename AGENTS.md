@@ -66,16 +66,23 @@ honestly.
 | Remove image background          | `image.remove_bg` (rembg)                                                             | needs `pip install rembg`           |
 | Cluster near-duplicate images    | `image.dedup` (dHash + Hamming)                                                       | zero-dep, fast                      |
 | Score image quality (0-5)        | `image.aesthetic` (resolution + aspect + size + bitdepth)                             | no-LLM                              |
+| Auto-pick best thumbnail frame   | `image.best_frame` (sharpness + contrast + face detection)                            | samples across video                |
 | Tag relevance vs script          | `image.relevance` (Jaccard token overlap)                                             | pure set math                       |
 | Get a stock video                | `video.download` (pexels / pixabay / wikimedia)                                       | pexels+pixabay need keys            |
 | Stills -> video (Ken Burns)      | `video.from_images`                                                                   | local ffmpeg, no key                |
 | Video -> stills                  | `video.extract_frames` (interval / count / times)                                     | local ffmpeg, no key                |
 | AI motion from one still         | `video.animate` (ComfyUI + AnimateDiff)                                               | needs ComfyUI; fails loudly if absent |
 | Edit a video                     | `video.trim` / `crop` / `resize` / `fade` / `grade` / `denoise`                       | standard                            |
+| Content-aware reframe            | `video.auto_reframe` (face-aware crop for 9:16/16:9/1:1/4:5)                          | falls back to center-crop           |
+| Face blur / privacy redaction    | `video.face_blur` (blur/pixelate/black tracked overlay)                               | needs `pip install opencv-python`   |
+| Eye contact correction           | `video.eye_contact` (shift gaze toward camera)                                        | basic OpenCV/MediaPipe landmarks    |
 | Split a long clip                | `video.scene_split` (equal or marks)                                                  | lossless stream-copy option         |
 | Detect scene cuts                | `video.scene_detect` (scene-score threshold + smartAssemble)                          | ffmpeg-native                       |
+| Auto chapter markers             | `analyze.chapters` (topic boundaries from transcript)                                 | needs voice.stt transcript          |
+| Highlight / viral clip detection | `analyze.highlights` (audio energy + speech density + scene rate)                     | ranks best moments                  |
 | Cluster near-dup video frames    | `video.dedup` (dHash sampled at N frames)                                             | zero-dep                            |
 | Make a slideshow                 | `render.slideshow` (with `audio`)                                                     | ffmpeg-native                       |
+| Auto B-roll suggestions          | `edit.broll` (visual keyword search queries from transcript)                          | agent downloads with image/video.download |
 | Assemble + transitions           | `render.timeline` (with `clips` + `transition`)                                       | ffmpeg-native                       |
 | Make motion graphics             | `motion.remotion` (TSX) / `motion.remotion_template` (6 reusable templates)           | full React/Remotion capacity        |
 | Make animation programmatically  | `motion.canvas` (Canvas 2D draw)                                                      | no key, per-frame capture           |
@@ -96,6 +103,9 @@ honestly.
 | Speak in a cloned voice          | `voice.voicebox_speak`                                                                | most realistic; needs Voicebox      |
 | Clone a voice (offline)          | `voice.clone` (Coqui XTTS-v2)                                                         | needs `pip install TTS` + model     |
 | Transcribe                       | `voice.stt` (faster-whisper)                                                          | needs `pip install faster-whisper`  |
+| Transcribe + speaker labels      | `voice.diarize` (faster-whisper + pyannote.audio)                                     | needs `pip install pyannote.audio`  |
+| Remove filler words from audio   | `audio.remove_fillers` (um/uh/like/etc. + gap tighten)                                | needs transcript from voice.stt     |
+| Separate stems (vocals/music)    | `audio.separate` (Demucs)                                                             | needs `pip install demucs`          |
 | Detect BPM / beat grid           | `audio.beat` (astats Peak_level)                                                      | zero-dep                            |
 | Detect onsets + intensity        | `audio.onset` (opm -> calm/mid/energetic + target BPM)                                | ffmpeg-native                       |
 | Auto-duck music under VO         | `audio.duck` (sidechain or envelope mode)                                             | ffmpeg-native                       |
