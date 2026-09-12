@@ -89,7 +89,7 @@ export default definePlugin({
             } catch (e) {
                 throw new PluginFailure({
                     code: 'REMOTION_NOT_INSTALLED',
-                    message: 'Remotion packages are not installed in VideoForge.',
+                    message: 'Remotion packages are not installed in Agentic Video.',
                     reason: String(e),
                     retryable: false,
                     hint: 'Run: npm install remotion @remotion/bundler @remotion/renderer',

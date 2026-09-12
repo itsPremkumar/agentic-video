@@ -1,4 +1,4 @@
-"""VideoForge Python plugin helpers."""
+"""Agentic Video Python plugin helpers."""
 
 from .runtime import (
     PluginFailure,

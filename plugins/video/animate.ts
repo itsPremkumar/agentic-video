@@ -5,7 +5,7 @@
  * `video.from_images` (Ken Burns / slideshow) — that one needs nothing.
  * This one needs a running ComfyUI with the AnimateDiff extension.
  *
- * Per the VideoForge contract this plugin never silently degrades: if ComfyUI
+ * Per the Agentic Video contract this plugin never silently degrades: if ComfyUI
  * is unreachable, or AnimateDiff is not installed, it FAILS with a specific
  * code. Choosing a different approach is the caller's decision.
  *
@@ -170,7 +170,7 @@ export default definePlugin({
                     images: ['7', 0],
                     frame_rate: Number(input.fps ?? 16),
                     loop_count: 0,
-                    filename_prefix: 'videoforge',
+                    filename_prefix: 'agenticvideo',
                     format: 'video/h264-mp4',
                 },
             },

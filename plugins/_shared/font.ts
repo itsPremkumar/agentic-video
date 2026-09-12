@@ -51,7 +51,7 @@ function stageDir(): string {
     // Avoid paths that contain ':' (Windows drive letters) or spaces.
     // ffmpeg's drawtext uses ':' as the option separator, and spaces inside
     // a filter_complex string break the parser.
-    return '/tmp/videoforge-fonts';
+    return '/tmp/agenticvideo-fonts';
 }
 
 export function defaultFontPath(): string {

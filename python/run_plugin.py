@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-run_plugin.py — the Python side of the VideoForge plugin bridge.
+run_plugin.py — the Python side of the Agentic Video plugin bridge.
 
   python py/run_plugin.py describe <module.py> [<module.py> ...]
       Prints a JSON array of plugin manifests.

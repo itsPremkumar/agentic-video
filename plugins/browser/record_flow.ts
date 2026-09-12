@@ -51,7 +51,7 @@ export default definePlugin({
 
         const width = Number(input.width ?? 1280);
         const height = Number(input.height ?? 720);
-        const videoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'videoforge-video-'));
+        const videoDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agenticvideo-video-'));
         const warnings: string[] = [];
 
         const session = await launch({

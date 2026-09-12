@@ -3,7 +3,7 @@
  * scripts/setup-voicebox.mjs — one-time installer for the vendored Voicebox TTS
  * backend (vendor/voicebox/speech).
  *
- * Creates a dedicated venv at .venv-voicebox (so VideoForge's own interpreter
+ * Creates a dedicated venv at .venv-voicebox (so Agentic Video's own interpreter
  * stays clean) and installs the backend requirements into it.
  *
  * Usage:
@@ -57,7 +57,7 @@ const isWin = process.platform === 'win32';
 const basePython = opts.python ?? 'python';
 const venvPython = path.join(opts.venv, isWin ? 'Scripts' : 'bin', isWin ? 'python.exe' : 'python');
 
-console.log('=== VideoForge · Voicebox setup ===');
+console.log('=== Agentic Video · Voicebox setup ===');
 console.log('venv      :', opts.venv);
 
 if (!fs.existsSync(venvPython)) {

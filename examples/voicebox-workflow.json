@@ -21,7 +21,7 @@
     {
       "plugin": "voice.voicebox_speak",
       "input": {
-        "text": "This is the cloned voice speaking through VideoForge.",
+        "text": "This is the cloned voice speaking through Agentic Video.",
         "profile": "Narrator",
         "language": "en",
         "out": "cloned-speech.wav"

@@ -1,5 +1,5 @@
 /**
- * core/types.ts — the VideoForge contract.
+ * core/types.ts — the Agentic Video contract.
  *
  * Design rule: every operation is explicit and individually acknowledged.
  * There is no orchestrator, no planner, and no silent fallback anywhere in

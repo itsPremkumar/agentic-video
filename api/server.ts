@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 /**
- * api/server.ts - HTTP surface for VideoForge.
+ * api/server.ts - HTTP surface for Agentic Video.
  *
  *   GET  /health            liveness
  *   GET  /plugins           every plugin manifest
@@ -123,7 +123,7 @@ const port = portArg >= 0 ? Number(process.argv[portArg + 1]) : Number(process.e
 
 if (process.argv[1] && /server\.ts$/.test(process.argv[1])) {
     startServer(port).then(() => {
-        console.log('VideoForge API listening on http://localhost:' + port);
+        console.log('Agentic Video API listening on http://localhost:' + port);
         console.log('  GET  /health');
         console.log('  GET  /plugins');
         console.log('  GET  /plugins/:id');

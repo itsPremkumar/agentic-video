@@ -1,7 +1,7 @@
-# VideoForge
+# Agentic Video
 
 A pure plugin-based toolkit for agentic video editing and creation. An external
-AI agent drives VideoForge by combining explicit plugins, **one at a time**.
+AI agent drives Agentic Video by combining explicit plugins, **one at a time**.
 There is no LLM orchestrator, no goal planner, and no autonomous workflow
 inside this project — it is just a large, explicit set of tools.
 
@@ -26,7 +26,7 @@ External AI agent  ->  Plugin Interface (CLI / HTTP / MCP / batch)
    discover, validate, and run plugins (ffmpeg wrapper, headless Chrome
    bridge, Python bridge, validation, registry, runner).
 3. **Every operation is explicit and independent.** The external agent decides
-   what to do. Nothing inside VideoForge makes a decision for it.
+   what to do. Nothing inside Agentic Video makes a decision for it.
 4. **Failures are loud, never silent.** No plugin falls back to a substitute.
    Missing key, missing dependency, broken input — every case returns a
    structured `PluginFailure` with `code`, `message`, `reason`, `input`,
@@ -37,7 +37,7 @@ External AI agent  ->  Plugin Interface (CLI / HTTP / MCP / batch)
 ## Quick start
 
 ```bash
-cd VideoForge
+cd agentic-video
 cp .env.example .env                # add FAL_KEY / REPLICATE_API_TOKEN if you want AI plugins
 
 npm run forge list                   # list every plugin (120 by default)
@@ -55,9 +55,9 @@ npm run mcp                          # start the MCP stdio server (JSON-RPC)
 ## Project layout
 
 ```
-VideoForge/
+agentic-video/
 ├── core/            plugin contract: loader, registry, runner, media, artifacts
-├── plugins/         every capability (120) — see plugins/README.md
+├── plugins/         every capability (124) — see plugins/README.md
 │   ├── INDEX.md     generated catalogue: id → one-liner → engine → file
 │   └── _shared/     shared code, never registered as plugins
 ├── python/          Python bridge (run_plugin.py) + forge_py runtime
@@ -115,7 +115,7 @@ Every category has a "tier-1" plugin — the most-used single tool — so an age
 
 ## Local voice: the vendored Voicebox backend
 
-VideoForge ships a **complete, local TTS studio** at `vendor/voicebox/speech/`
+Agentic Video ships a **complete, local TTS studio** at `vendor/voicebox/speech/`
 — a vendored copy of [Voicebox](https://github.com/jamiepine/voicebox) (MIT).
 It gives you GPU-accelerated narration and **zero-shot voice cloning** with no
 cloud service and no per-character billing.

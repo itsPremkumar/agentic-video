@@ -9,7 +9,7 @@ import { vbConfig, vbJson, VB_DEFAULT_BASE } from './_voicebox.ts';
 /**
  * voice.voicebox_server - lifecycle control for the vendored Voicebox backend.
  *
- * VideoForge ships the full Voicebox FastAPI server under:
+ * Agentic Video ships the full Voicebox FastAPI server under:
  *     vendor/voicebox/speech/      (MIT, jamiepine/voicebox)
  *
  * This plugin starts / stops / inspects that server so an external agent can
@@ -50,7 +50,7 @@ function resolveBackendDir(input: Record<string, unknown>): string {
             input: { backendDir: dir },
             retryable: false,
             hint:
-                'The vendored backend ships with VideoForge at vendor/voicebox/speech. ' +
+                'The vendored backend ships with Agentic Video at vendor/voicebox/speech. ' +
                 'If you moved it, pass backendDir (or set VOICEBOX_BACKEND_DIR).',
         });
     }

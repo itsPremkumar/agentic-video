@@ -1,5 +1,5 @@
 """
-forge_py.runtime — shared helpers for VideoForge Python plugins.
+forge_py.runtime — shared helpers for Agentic Video Python plugins.
 
 Every Python plugin module exposes:
 

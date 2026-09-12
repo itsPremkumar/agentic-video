@@ -1,6 +1,6 @@
-# AGENTS.md — operating VideoForge from an external AI agent
+# AGENTS.md — operating Agentic Video from an external AI agent
 
-VideoForge is a passive tool. **You** (the agent) decide what to do. The
+Agentic Video is a passive tool. **You** (the agent) decide what to do. The
   
 project never decides, retries, or substitutes on your behalf. Everything
   

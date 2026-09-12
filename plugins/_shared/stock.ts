@@ -107,7 +107,7 @@ export async function wikimediaSearch(
         `&gsrnamespace=6&gsrlimit=${count}` +
         `&prop=imageinfo&iiprop=url|size|mime|extmetadata` +
         (opts.thumb ? `&iiurlwidth=${opts.thumb}` : '');
-    const res = await fetch(url, { headers: { 'User-Agent': 'VideoForge/1.0' } });
+    const res = await fetch(url, { headers: { 'User-Agent': 'AgenticVideo/1.0' } });
     if (!res.ok) await providerError('Wikimedia API', res, { query, count });
 
     const json = (await res.json()) as { query?: { pages?: Record<string, any> } };

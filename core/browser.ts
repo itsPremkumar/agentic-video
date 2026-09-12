@@ -94,7 +94,7 @@ export class Browser {
 
     private async start(opts: BrowserOptions): Promise<void> {
         const exe = requireChrome();
-        this.tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'videoforge-chrome-'));
+        this.tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agenticvideo-chrome-'));
         const port = 0; // let the OS choose; Chrome prints the real port
 
         this.proc = spawn(

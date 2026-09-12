@@ -1,6 +1,6 @@
 # Third-party licences
 
-VideoForge bundles the following third-party source code. Licences are
+Agentic Video bundles the following third-party source code. Licences are
 reproduced here so the project remains compliant and auditable.
 
 ---
@@ -44,14 +44,14 @@ reproduced here so the project remains compliant and auditable.
 `vendor/voicebox/speech/requirements.txt` pulls in FastAPI, Uvicorn, SQLAlchemy,
 PyTorch, Transformers, Kokoro, ONNX Runtime and friends. These are **not**
 vendored — they are installed on demand by `npm run setup:voicebox`, which
-creates an isolated `.venv-voicebox` so the main VideoForge interpreter is
+creates an isolated `.venv-voicebox` so the main Agentic Video interpreter is
 untouched. Each of those packages keeps its own licence.
 
 ---
 
 ## Service provider notes
 
-VideoForge *talks to* the following services but ships none of their code:
+Agentic Video *talks to* the following services but ships none of their code:
 
 | Service | Used by | Key required | Licence of returned media |
 |---------|---------|--------------|---------------------------|

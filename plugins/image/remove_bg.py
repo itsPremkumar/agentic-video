@@ -31,7 +31,7 @@ def run(input: dict, ctx: dict) -> dict:
     except Exception as e:
         raise PluginFailure(
             code="REMBG_NOT_INSTALLED",
-            message="rembg is not installed in VideoForge's Python.",
+            message="rembg is not installed in Agentic Video's Python.",
             reason=str(e),
             input=input,
             hint="Install with: pip install rembg[gpu]   (or rembg for CPU)",

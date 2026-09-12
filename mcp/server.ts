@@ -1,8 +1,8 @@
 #!/usr/bin/env tsx
 /**
- * mcp/server.ts - Model Context Protocol (stdio) server for VideoForge.
+ * mcp/server.ts - Model Context Protocol (stdio) server for Agentic Video.
  *
- * Each VideoForge plugin is exposed as one MCP tool. Inputs become the tool's
+ * Each Agentic Video plugin is exposed as one MCP tool. Inputs become the tool's
  * inputSchema. tool results are the formatted OpResult ack.
  *
  * Run:
@@ -15,7 +15,7 @@ import { all } from '../core/registry.ts';
 import { formatAck } from '../core/result.ts';
 import type { OpResult } from '../core/types.ts';
 
-const SERVER_INFO = { name: 'videoforge', version: '0.1.0' };
+const SERVER_INFO = { name: 'agentic-video', version: '0.1.0' };
 
 function jsonSchemaFor(spec: { type: string; description?: string; required?: boolean; enum?: string[]; minimum?: number; maximum?: number; default?: unknown }): Record<string, unknown> {
     const s: Record<string, unknown> = {};
