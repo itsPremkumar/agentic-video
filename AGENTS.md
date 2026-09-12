@@ -111,8 +111,12 @@ honestly.
 | Parse a script                   | `text.script_parse` (cue blocks -> scenes + keywords)                                  | stopword-filtered                   |
 | SEO bundle                       | `text.seo` (title / description / hashtags)                                           | deterministic                       |
 | Generate a hook opener           | `text.hook` (7 opener templates, FNV-1a seeded)                                       | deterministic                       |
-| Browser screenshot of a URL      | `browser.screenshot`                                                                  | headless Chromium                   |
-| Browser screen recording         | `browser.record`                                                                      | per-frame scroll+screenshot         |
+| Browser screenshot of a URL      | `browser.screenshot`                                                                  | zero-dep CDP                        |
+| Open a real website (cookie banner, dark mode) | `browser.open`                                                          | Playwright Chromium                 |
+| Drive a site (click/type/scroll) | `browser.act` with action list: `navigate/click/fill/press/hover/select/scroll/wait/evaluate/screenshot` | Playwright auto-waiting, strict-mode locators |
+| Record a video walkthrough       | `browser.record_flow`                                                                 | Playwright recordVideo + ffmpeg     |
+| Scroll-capture a long page       | `browser.scroll_capture`                                                              | Playwright + Ken Burns feed         |
+| Browser screen recording (per-frame) | `browser.record`                                                                  | per-frame scroll+screenshot         |
 | Desktop screen recording         | `screen.record`                                                                       | ffmpeg gdigrab/avfoundation/x11grab |
 | Multi-aspect distribution        | `export.derivative` (16:9 + 9:16 + 1:1 + thumb)                                       | one-call                            |
 | QC an asset                      | `qc.asset` (resolution/aspect/duration/sha256)                                        | per-call                            |
