@@ -1,0 +1,7 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "background": "#06121f",
+  "out": "particles.png",
+  "draw": "(ctx, W, H) => {\n  // Background\n  ctx.fillStyle = '#06121f';\n  ctx.fillRect(0, 0, W, H);\n  // Gradient overlay\n  const g = ctx.createRadialGradient(W/2, H*0.4, 0, W/2, H*0.4, Math.max(W, H)*0.7);\n  g.addColorStop(0, 'rgba(56, 189, 248, 0.55)');\n  g.addColorStop(1, 'rgba(56, 189, 248, 0)');\n  ctx.fillStyle = g;\n  ctx.fillRect(0, 0, W, H);\n  // Particles\n  ctx.globalCompositeOperation = 'screen';\n  for (let i = 0; i < 220; i++) {\n    const x = Math.random() * W;\n    const y = Math.random() * H;\n    const r = 1 + Math.random() * 3;\n    const a = 0.3 + Math.random() * 0.6;\n    ctx.fillStyle = `rgba(${100 + Math.random()*155}, ${180 + Math.random()*60}, 255, ${a})`;\n    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();\n  }\n  ctx.globalCompositeOperation = 'source-over';\n  // Title\n  ctx.fillStyle = '#f8fafc';\n  ctx.font = 'bold 96px Georgia, serif';\n  ctx.textAlign = 'center';\n  ctx.fillText('Ocean Plastic', W/2, H*0.85);\n  ctx.fillStyle = '#94a3b8';\n  ctx.font = '32px Helvetica, Arial, sans-serif';\n  ctx.fillText('A SHORT FILM', W/2, H*0.88 + 90);\n}"
+}

@@ -1,0 +1,7 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "background": "#06121f",
+  "out": "title-card.png",
+  "svg": "<svg xmlns='http://www.w3.org/2000/svg' width='1080' height='1920' viewBox='0 0 1080 1920'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#0b2a4a'/><stop offset='1' stop-color='#06121f'/></linearGradient><radialGradient id='r' cx='0.5' cy='0.35' r='0.6'><stop offset='0' stop-color='#38bdf8' stop-opacity='0.55'/><stop offset='1' stop-color='#38bdf8' stop-opacity='0'/></radialGradient></defs><rect width='1080' height='1920' fill='url(#g)'/><circle cx='540' cy='640' r='420' fill='url(#r)'/><text x='540' y='900' font-family='Georgia,serif' font-size='104' font-weight='700' fill='#f8fafc' text-anchor='middle'>Ocean</text><text x='540' y='1010' font-family='Georgia,serif' font-size='104' font-weight='700' fill='#38bdf8' text-anchor='middle'>Plastic</text><rect x='440' y='1080' width='200' height='6' rx='3' fill='#38bdf8'/><text x='540' y='1180' font-family='Helvetica,Arial,sans-serif' font-size='38' letter-spacing='8' fill='#94a3b8' text-anchor='middle'>A SHORT FILM</text></svg>"
+}

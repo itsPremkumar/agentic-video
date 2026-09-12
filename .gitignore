@@ -1,0 +1,10 @@
+node_modules/
+workspace/
+.env
+__pycache__/
+*.pyc
+dist/
+
+# Voicebox local TTS: isolated venv created by `npm run setup:voicebox`.
+# (vendor/voicebox itself IS committed - it is vendored MIT source.)
+.venv-voicebox/

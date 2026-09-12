@@ -1,0 +1,14 @@
+{
+    "id": "image.remove_bg",
+    "name": "Remove the background from an image",
+    "category": "effects",
+    "description": "Local rembg (U-2-Net / ISNet) background removal. Writes a PNG with alpha.",
+    "engine": "python",
+    "version": "1.0.0",
+    "inputs": {
+        "file": {"type": "string", "required": true, "description": "Path to input image"},
+        "model": {"type": "string", "default": "u2net", "enum": ["u2net", "u2netp", "u2net_human_seg", "u2net_cloth_seg", "silueta", "isnet-general-use"], "description": "Which rembg model to use"},
+        "out": {"type": "string", "default": "no-bg.png", "description": "Output PNG path (alpha preserved)"}
+    },
+    "outputs": ["image"]
+}

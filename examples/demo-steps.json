@@ -1,0 +1,19 @@
+{
+  "_comment": "Explicit step-by-step instructions for an external agent. Each step is one plugin call. The runner executes them in order and STOPS at the first failure - nothing is substituted or retried automatically.",
+  "steps": [
+    {
+      "plugin": "image.download",
+      "input": { "query": "coral reef underwater", "provider": "pexels", "count": 3, "prefix": "reef" }
+    },
+    {
+      "plugin": "image.resize",
+      "input": {
+        "src": "workspace/artifacts/image.download/reef_1_pexels_*.jpeg",
+        "width": 1080,
+        "height": 1920,
+        "fit": "contain",
+        "out": "scene1.png"
+      }
+    }
+  ]
+}

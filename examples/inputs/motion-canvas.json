@@ -1,0 +1,9 @@
+{
+  "duration": 4,
+  "fps": 30,
+  "width": 720,
+  "height": 1280,
+  "background": "#06121f",
+  "out": "ripple.mp4",
+  "draw": "(ctx, t, frame, total, W, H) => {\n  ctx.fillStyle = '#06121f';\n  ctx.fillRect(0, 0, W, H);\n  // Concentric rings that ripple outward\n  const cx = W/2, cy = H*0.55;\n  for (let i = 0; i < 6; i++) {\n    const phase = (t + i*0.12) % 1;\n    const r = phase * Math.max(W, H) * 0.6;\n    const alpha = 1 - phase;\n    ctx.beginPath();\n    ctx.arc(cx, cy, r, 0, Math.PI*2);\n    ctx.lineWidth = 4;\n    ctx.strokeStyle = `rgba(56, 189, 248, ${alpha*0.8})`;\n    ctx.stroke();\n  }\n  // Orbiting dot\n  const ang = t * Math.PI * 2;\n  ctx.beginPath();\n  ctx.arc(cx + Math.cos(ang)*Math.min(W,H)*0.28, cy + Math.sin(ang)*Math.min(W,H)*0.28, 14, 0, Math.PI*2);\n  ctx.fillStyle = '#38bdf8';\n  ctx.shadowColor = '#38bdf8';\n  ctx.shadowBlur = 30;\n  ctx.fill();\n  ctx.shadowBlur = 0;\n  // Title\n  ctx.fillStyle = '#f8fafc';\n  ctx.font = 'bold 72px Georgia, serif';\n  ctx.textAlign = 'center';\n  ctx.fillText('Ocean', cx, H*0.18);\n  ctx.fillText('Plastic', cx, H*0.18 + 90);\n  ctx.fillStyle = '#94a3b8';\n  ctx.font = '24px Helvetica, Arial, sans-serif';\n  ctx.fillText('A SHORT FILM', cx, H*0.18 + 150);\n}"
+}

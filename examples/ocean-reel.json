@@ -1,0 +1,121 @@
+{
+  "steps": [
+    {
+      "plugin": "image.resize",
+      "input": {
+        "src": "workspace/artifacts/image.download/reef_1_pexels_17598833.jpeg",
+        "width": 1080,
+        "height": 1920,
+        "fit": "contain",
+        "out": "scene1.png"
+      }
+    },
+    {
+      "plugin": "image.resize",
+      "input": {
+        "src": "workspace/artifacts/image.download/reef_2_pexels_18229778.jpeg",
+        "width": 1080,
+        "height": 1920,
+        "fit": "contain",
+        "out": "scene2.png"
+      }
+    },
+    {
+      "plugin": "image.resize",
+      "input": {
+        "src": "workspace/artifacts/image.download/reef_3_pexels_13377561.jpeg",
+        "width": 1080,
+        "height": 1920,
+        "fit": "contain",
+        "out": "scene3.png"
+      }
+    },
+    {
+      "plugin": "image.grade",
+      "input": {
+        "src": "workspace/artifacts/image.resize/scene1.png",
+        "brightness": 0.04,
+        "contrast": 1.12,
+        "saturation": 1.2,
+        "out": "scene1_graded.png"
+      }
+    },
+    {
+      "plugin": "image.grade",
+      "input": {
+        "src": "workspace/artifacts/image.resize/scene2.png",
+        "brightness": 0.04,
+        "contrast": 1.12,
+        "saturation": 1.2,
+        "out": "scene2_graded.png"
+      }
+    },
+    {
+      "plugin": "image.grade",
+      "input": {
+        "src": "workspace/artifacts/image.resize/scene3.png",
+        "brightness": 0.02,
+        "contrast": 1.08,
+        "saturation": 1.15,
+        "out": "scene3_graded.png"
+      }
+    },
+    {
+      "plugin": "voice.tts",
+      "input": {
+        "text": "Every year, eight million tonnes of plastic enter our ocean. This is what we are fighting for.",
+        "voice": "en-US-AriaNeural",
+        "rate": "-5%",
+        "out": "narration.mp3"
+      }
+    },
+    {
+      "plugin": "music.generate",
+      "input": {
+        "duration": 14,
+        "bpm": 84,
+        "key": "A",
+        "mood": "calm",
+        "out": "bed.wav"
+      }
+    },
+    {
+      "plugin": "audio.merge",
+      "input": {
+        "sources": [
+          "workspace/artifacts/voice_tts/narration.mp3",
+          "workspace/artifacts/music_generate/bed.wav"
+        ],
+        "weights": [1, 0.18],
+        "duration": "longest",
+        "normalize": true,
+        "out": "soundtrack.mp3"
+      }
+    },
+    {
+      "plugin": "render.slideshow",
+      "input": {
+        "images": [
+          "workspace/artifacts/image.grade/scene1_graded.png",
+          "workspace/artifacts/image.grade/scene2_graded.png",
+          "workspace/artifacts/image.grade/scene3_graded.png"
+        ],
+        "durations": [4.5, 4.5, 5],
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "kenBurns": true,
+        "fade": 0.6,
+        "audio": "workspace/artifacts/audio.merge/soundtrack.mp3",
+        "out": "ocean-reel.mp4"
+      }
+    },
+    {
+      "plugin": "export.probe",
+      "input": {
+        "src": "workspace/artifacts/render.slideshow/ocean-reel.mp4",
+        "blackCheck": true
+      }
+    }
+  ]
+}

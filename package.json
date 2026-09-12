@@ -1,0 +1,26 @@
+{
+  "name": "videoforge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure, modular, plugin-based video editing and creation toolkit. No orchestrator, no LLM, no autonomous pipeline — an external agent drives one plugin at a time.",
+  "scripts": {
+    "forge": "tsx bin/forge.ts",
+    "api": "tsx api/server.ts",
+    "mcp": "tsx mcp/server.ts",
+    "typecheck": "tsc --noEmit",
+    "plugins": "tsx bin/forge.ts list",
+    "gen:index": "tsx scripts/gen-plugin-index.ts",
+    "setup:voicebox": "node scripts/setup-voicebox.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@remotion/bundler": "^4.0.523",
+    "@remotion/renderer": "^4.0.523",
+    "remotion": "^4.0.523"
+  }
+}

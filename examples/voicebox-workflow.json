@@ -1,0 +1,31 @@
+{
+  "steps": [
+    {
+      "plugin": "voice.voicebox_health",
+      "input": { "baseUrl": "http://127.0.0.1:17493" }
+    },
+    {
+      "plugin": "voice.voicebox_clone",
+      "input": {
+        "name": "Narrator",
+        "refAudio": "workspace/artifacts/voice_tts/narration.mp3",
+        "referenceText": "Every year eight million tonnes of plastic enter our ocean.",
+        "language": "en",
+        "defaultEngine": "qwen"
+      }
+    },
+    {
+      "plugin": "voice.voicebox_profiles",
+      "input": { "action": "list", "baseUrl": "http://127.0.0.1:17493" }
+    },
+    {
+      "plugin": "voice.voicebox_speak",
+      "input": {
+        "text": "This is the cloned voice speaking through VideoForge.",
+        "profile": "Narrator",
+        "language": "en",
+        "out": "cloned-speech.wav"
+      }
+    }
+  ]
+}
