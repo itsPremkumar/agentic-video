@@ -1,16 +1,16 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 128 plugins, 17 categories.
+> 130 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
-- [analyze](#analyze) (9)
+- [analyze](#analyze) (10)
 - [audio](#audio) (16)
 - [brand](#brand) (3)
 - [browser](#browser) (2)
 - [distribute](#distribute) (4)
-- [edit](#edit) (3)
+- [edit](#edit) (4)
 - [effects](#effects) (6)
 - [export](#export) (6)
 - [fx](#fx) (7)
@@ -28,6 +28,7 @@
 | Plugin | What it does | Outputs |
 |---|---|---|
 | `analyze.scene_audit` | Per-scene probe + cross-check + final assembly QC. Returns a JSON audit report. | json |
+| `analyze.scopes` | Render a waveform, vectorscope and histogram for a frame, plus numeric signal statistics. | image, data |
 | `analyze.video` | QC report: black frames, freeze frames, audio peaks, codec/duration/aspect/fps. | json |
 | `audio.onset` | Measures onsets-per-minute from an audio file, classifies the track as calm/mid/energetic, returns the matching target BPM and top-50 onset timestamps. | json |
 | `image.aesthetic` | Returns a 0-5 score: +2 resolution >= 1280x720, +1 >= 1920x1080, +1 sane aspect ratio, +1 file size > 200KB, +1 valid bit-depth. No LLM. | json |
@@ -88,6 +89,7 @@
 |---|---|---|
 | `edit.beat_cut` | Convert an audio.beat grid into an explicit clip list for render.timeline, so every cut lands on an onset (or beat). | data |
 | `edit.ops` | Apply a batch of timeline operations (delete/insert/reorder/update/retime) to a JSON timeline spec. Returns the new timeline + a log of applied ops. | json |
+| `edit.transcript_cut` | Turn a transcript into a clip list: drop filler words, keep only matching lines, and tighten silences. | data |
 | `video.scene_split` | Split a long clip into N sub-clips: evenly (mode=equal, count=N) or at explicit comma-separated timestamp marks (mode=marks). Uses lossless trim+concat. | video |
 
 ## effects

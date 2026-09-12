@@ -1,6 +1,6 @@
 # Agentic Video
 
-A **passive** video toolkit. It has 128 plugins and **no orchestrator** — it never decides,
+A **passive** video toolkit. It has 130 plugins and **no orchestrator** — it never decides,
   
 retries or substitutes. You are the intelligence. It is the hands.
 
@@ -28,7 +28,7 @@ toolkit exists to prevent.
 
 ```bash
 cd <path-to>/agentic-video
-npm run forge list              # must print 128 plugins
+npm run forge list              # must print 130 plugins
 ffmpeg -version                 # required for almost everything
 cp .env.example .env            # add PEXELS_API_KEY — see references/providers.md
 npx playwright install chromium # only if you use browser.* plugins
@@ -55,9 +55,10 @@ next stage. Skip stages you do not need; do not reorder them.
 | 5b | Animate a clip           | `video.transform` (keyframed scale / position / rotation)             |
 | 6 | Voice, music, subtitles  | `voice.tts`, `music.generate`, `subtitle.create`, `subtitle.burn`     |
 | 6a | Multi-speaker dialogue   | `voice.dialogue` (one voice per speaker, sequenced)                    |
+| 6c | Cut by transcript        | `voice.stt` → `edit.transcript_cut` (drop fillers, keep by keyword)    |
 | 6b | Beat-sync (optional)     | `audio.beat` → `edit.beat_cut` → hard cuts on the onsets              |
 | 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
-| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`                     |
+| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`   |
 
 ### Stage 1 — stock media
 
@@ -225,6 +226,8 @@ A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.js
 | Join clips                          | `video.merge` (concat) / `render.timeline` (transitions) | —                                           |
 | Cut a clip                          | `video.trim`                                             | —                                           |
 | Check a file                        | `export.probe`                                           | —                                           |
+| Measure a picture before grading    | `analyze.scopes` (waveform/vectorscope/histogram)         | grading by eye                              |
+| Cut by what was said                | `voice.stt` → `edit.transcript_cut`                      | scrubbing manually                          |
 
 Full list: [references/plugin-catalogue.md](references/plugin-catalogue.md).
 
@@ -311,7 +314,7 @@ Every one of these was hit by actually running the pipeline, not by reading the 
 
 ## References
 
-- [references/plugin-catalogue.md](references/plugin-catalogue.md) — all 128 plugins by category *(generated)*
+- [references/plugin-catalogue.md](references/plugin-catalogue.md) — all 130 plugins by category *(generated)*
 - [references/remotion-templates.md](references/remotion-templates.md) — all 20 templates + props *(generated)*
 - [references/providers.md](references/providers.md) — stock / AI / TTS sources and keys
 - [references/failure-codes.md](references/failure-codes.md) — every code and what to do

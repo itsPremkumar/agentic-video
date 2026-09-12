@@ -159,6 +159,76 @@ already exist in the vendored code. They are not written yet because `npm run se
 (~2–3 GB) has not been run, and shipping wrappers that cannot be executed end to end would be
 guesswork — which is how the six wrong input names in the skill docs got there in the first place.
 
+---
+
+## What a professional post team actually does
+
+Researched against published post-production workflows and the current landscape of agentic
+editing tools. The industry pipeline is well defined, and mapping it against this toolkit is the
+honest way to see what "replace a post team" would require.
+
+### The roles, and where this toolkit stands
+
+| Role | What they actually do | Covered? |
+|---|---|---|
+| **Assistant editor** | Ingest, organise bins, sync double-system audio, generate proxies, back up | ❌ no ingest, no sync, no proxies |
+| **Editor** | Assembly → rough → fine cut; pacing; picture lock | 🟡 `render.timeline`, `edit.beat_cut`, `edit.transcript_cut`, `video.trim` — but no versions, no lock, no multicam |
+| **Sound editor** | Dialogue edit, ADR flags, ambience, Foley, SFX, mix, **stem export** | 🟡 strong on processing (`audio.master`, `audio.eq`, `audio.duck`); **no stems export**, no Foley/ambience |
+| **Colourist** | Conform from EDL/XML, primary (shot matching, exposure, white balance), creative grade, **secondary corrections** | 🟡 grades exist; **scopes now added**; still no shot matching, no secondaries, no conform |
+| **VFX artist** | Keying, tracking, roto, screen replacement, cleanup | 🔴 `fx.chroma_key` and `image.remove_bg` only; no tracking, no masks, no video background removal |
+| **Motion designer** | Titles, lower thirds, infographics, animation | ✅ 20 Remotion templates + `motion.remotion`, `video.transform` |
+| **Subtitler** | Captions, translation, dubbing, sync | 🟡 `subtitle.*` is solid; no translation, no dubbing, no auto-sync |
+| **QC / technical** | Format specs, legal levels, loudness, black-frame and dropout checks | 🟡 `qc.gate`, `export.probe`, `analyze.scopes`; no dropout detection, no slating |
+| **Delivery** | Platform variants, DCP/ProRes, stems, captions sidecar, metadata | 🟡 `export.derivative` does aspects + thumbnails; no encode presets, no stems, no DCP |
+
+### The stages nobody builds for, and this toolkit is missing
+
+1. **Ingestion & organisation** — proxy generation, double-system audio sync, media inventory with
+   checksums. Without proxies, editing 4K is painful; without sync, footage with separate audio
+   cannot be used at all.
+2. **Offline/online split** — edit on proxies, conform to camera originals at full resolution for
+   the grade. This is a *concept* the toolkit has no representation of.
+3. **Picture lock as state** — a declared, dated version that downstream stages work from. Right
+   now every run is stateless; there is no notion of "this is the approved cut".
+4. **Stems** — dialogue / music / effects delivered separately. A broadcast or distributor
+   requirement, and the thing that makes re-versioning (dubs, different edits) possible.
+5. **Handoff documents** — EDL/XML/AAF for conform, a VFX shot list with in/out frames, a delivery
+   spec sheet. These are what let a *team* work in parallel. An agent pipeline needs the same
+   artefacts to be re-enterable and reviewable.
+
+### What the agentic-editing landscape treats as table stakes
+
+From surveying current AI-editing tools and MCP servers, the capabilities an agent is expected to
+have: transcript-based cutting, semantic footage search, silence removal, multicam, auto-reframe,
+auto-captions, dubbing/translation, upscaling, frame interpolation, stabilisation, background
+removal, and NLE round-trip (Resolve/Premiere via MCP or XML).
+
+Of those, this toolkit now has: transcript cutting ✅, silence removal ✅, auto-reframe ✅,
+auto-captions ✅, stabilisation ✅, reframing ✅.
+Still missing: **semantic footage search**, **multicam**, **dubbing/translation**, **upscaling**,
+**frame interpolation**, **video background removal**, **NLE round-trip**.
+
+---
+
+## Revised build order
+
+Superseding the earlier list, now ordered against the role table above.
+
+| # | Build | Role it serves | Why now |
+|---|---|---|---|
+| 1 | **Per-clip properties in `render.timeline`** (`transform`, `volume`, `speed`) | Editor | Still the highest-leverage change. Turns a concat into an edit. |
+| 2 | **`video.proxy` + `edit.conform`** | Assistant editor | Unblocks 4K and any real offline/online workflow. Straightforward. |
+| 3 | **`analyze.search`** — search transcripts and footage by meaning | Editor | The second half of transcript-driven editing: find the shot, not just cut it. |
+| 4 | **`delivery.stems`** | Sound editor | Broadcast/distribution requirement. Cheap: the pipeline already knows which file is voice and which is music. |
+| 5 | **`export.platform`** — encode presets per platform + broadcast legalisation | Delivery | Table stakes; `export.derivative` only does aspect ratios. |
+| 6 | **`video.retime`** — optical-flow interpolation | Editor | Real slow motion, and it retires the frame-duplication limitation. |
+| 7 | **`video.multicam`** — sync angles, switch between them | Editor | The one editor feature with no partial coverage at all. |
+| 8 | **`video.mask` + `analyze.track`** | VFX | Masks are the last big creative unlock; tracking makes them usable on moving shots. |
+| 9 | **`edit.match`** — shot matching | Colourist | The most visible difference between amateur and professional cutting. |
+| 10 | **`subtitle.translate` + `voice.dub`** | Subtitler | Localisation. Pairs with the existing TTS stack. |
+| 11 | **Project state + render cache** | All | Makes long timelines workable and re-runs incremental. |
+| 12 | **EDL / FCPXML export** | All | Only meaningful once the edit surface is stable. |
+
 ## What I would *not* build
 
 - **An orchestrator.** The whole point is that the caller decides. AVG's ADR 001 chose the
