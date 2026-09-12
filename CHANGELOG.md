@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`voice.dub`** — replace dialogue with synthesised speech at the original cue timings. For
+  localisation or ADR without an NLE. Does NOT translate — there is no model here, and inventing
+  one would be exactly the silent substitution this project refuses to do. You supply the text per
+  cue; this places and levels it. Lines that run long are reported rather than silently trimmed.
+- **`video.mask`** — shape masking with rectangles or ellipses, optional keyframed motion and
+  feathering, composited over a colour background or written transparent (webm/VP9). It is shape
+  masking, not rotoscoping: it will not follow a moving subject. That needs tracking, which needs
+  a model.
+- **`delivery.edl`** — write a CMX3600 EDL from a timeline so the cut can be opened in Resolve,
+  Premiere or Avid. The last missing handoff document. Transitions are NOT represented — CMX3600
+  can describe them, but the overlap means record timecodes stop matching a simple concatenation,
+  and getting that subtly wrong is worse than being explicit about it.
 - **`export.platform`** — encode to a named platform spec. `export.derivative` re-renders to
   different aspect ratios but says nothing about bitrate, frame rate or loudness, which is exactly
   what a platform rejects or re-encodes you for. Presets for YouTube (−14 LUFS), Shorts, Reels,

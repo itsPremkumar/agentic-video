@@ -171,7 +171,7 @@ the code slug is `agenticvideo`.
 | `audio` | 16 | `audio.beat`, `audio.denoise`, `audio.duck`, `audio.eq`, `audio.fade`, `audio.info`, `audio.lufs_for_platform`, `audio.master`, `audio.merge`, `audio.mux`, `audio.normalize`, `audio.remove_silence`, `audio.sfx`, `audio.speed`, `audio.trim`, `audio.volume` |
 | `brand` | 3 | `brand.kit`, `text.hook`, `text.seo` |
 | `browser` | 2 | `browser.act`, `browser.open` |
-| `distribute` | 5 | `delivery.archive`, `delivery.publish`, `delivery.revision`, `delivery.stems`, `export.derivative` |
+| `distribute` | 6 | `delivery.archive`, `delivery.edl`, `delivery.publish`, `delivery.revision`, `delivery.stems`, `export.derivative` |
 | `edit` | 6 | `edit.beat_cut`, `edit.conform`, `edit.match`, `edit.ops`, `edit.transcript_cut`, `video.scene_split` |
 | `effects` | 6 | `effects.color_grade`, `effects.look`, `effects.style`, `effects.video`, `image.remove_bg`, `video.denoise` |
 | `export` | 7 | `browser.extract`, `browser.pdf`, `export.contact_sheet`, `export.gif`, `export.platform`, `export.probe`, `export.reframe` |
@@ -182,8 +182,8 @@ the code slug is `agenticvideo`.
 | `render` | 6 | `motion.canvas`, `motion.effect`, `motion.remotion`, `motion.remotion_template`, `render.slideshow`, `render.timeline` |
 | `subtitle` | 5 | `subtitle.burn`, `subtitle.convert`, `subtitle.create`, `subtitle.karaoke`, `subtitle.syllable` |
 | `transitions` | 1 | `transitions.xfade` |
-| `video` | 27 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.retime`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
-| `voice` | 12 | `voice.clone`, `voice.dialogue`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
+| `video` | 28 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.mask`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.retime`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
+| `voice` | 13 | `voice.clone`, `voice.dialogue`, `voice.dub`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
 <!-- END GENERATED: categories -->
 
 Every category has a "tier-1" plugin — the most-used single tool — so an agent can solve the common case without learning the entire catalogue. Examples: `video.trim`, `audio.normalize`, `subtitle.create`, `image.resize`, `motion.remotion`, `export.derivative`, `fx.transition_effect`, `analyze.video`, `qc.gate`.

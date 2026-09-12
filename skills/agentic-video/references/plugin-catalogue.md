@@ -1,7 +1,7 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 139 plugins, 17 categories.
+> 142 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
@@ -9,7 +9,7 @@
 - [audio](#audio) (16)
 - [brand](#brand) (3)
 - [browser](#browser) (2)
-- [distribute](#distribute) (5)
+- [distribute](#distribute) (6)
 - [edit](#edit) (6)
 - [effects](#effects) (6)
 - [export](#export) (7)
@@ -20,8 +20,8 @@
 - [render](#render) (6)
 - [subtitle](#subtitle) (5)
 - [transitions](#transitions) (1)
-- [video](#video) (27)
-- [voice](#voice) (12)
+- [video](#video) (28)
+- [voice](#voice) (13)
 
 ## analyze
 
@@ -82,6 +82,7 @@
 | Plugin | What it does | Outputs |
 |---|---|---|
 | `delivery.archive` | Reads the current published version under <deliveriesRoot>/<projectId>/, moves that version folder into <archiveRoot>/<projectId>/<version>-<timestamp>. | video |
+| `delivery.edl` | Write a CMX3600 EDL from a timeline so the cut can be opened in Resolve, Premiere or Avid. | data |
 | `delivery.publish` | Copies a file to <outDir>/<projectId>/<version>/<basename>, writes a MANIFEST.json (sha1, size, mtime), and updates <projectId>/LATEST to point to the current version. | video |
 | `delivery.revision` | Bumps the patch component of the project's current version (v1.0 -> v1.1) and publishes the new file under that version tag. Reads LATEST marker to find the current version. | video |
 | `delivery.stems` | Package dialogue, music and effects as separate normalised stems, plus a full mix and a manifest. | audio, data |
@@ -215,6 +216,7 @@
 | `video.generate` | Create a video via fal.ai text-to-video or image-to-video. Requires FAL_KEY. | video |
 | `video.grade` | Adjust brightness, contrast, saturation and gamma of a video. | video |
 | `video.info` | Return duration, dimensions, codecs and streams for a video file. | data |
+| `video.mask` | Mask a rectangle or ellipse out of a clip, with feathering, optional keyframed motion, and a background to composite over. | video |
 | `video.merge` | Join multiple clips end to end. Re-encodes so mixed sources always work. | video |
 | `video.overlay` | Overlay one video/image on top of another (PiP). | video |
 | `video.proxy` | Build low-resolution editing proxies for a file or a folder, plus a manifest that edit.conform uses to relink the originals. | video, data |
@@ -236,6 +238,7 @@
 |---|---|---|
 | `voice.clone` | Synthesise speech in a cloned voice using Coqui XTTS-v2. Requires 'pip install TTS' and a reference audio. | audio |
 | `voice.dialogue` | Synthesise a multi-speaker script into one sequenced audio track, with a different voice per speaker. | audio |
+| `voice.dub` | Replace dialogue with synthesised speech at the original cue timings, for localisation or ADR. | audio |
 | `voice.list_voices` | List available Edge-TTS voices, optionally filtered by locale (e.g. en-US). | data |
 | `voice.stt` | Transcribe speech from an audio/video file using faster-whisper. | data |
 | `voice.tts` | Synthesise natural speech to an MP3/WAV file using Edge-TTS. | audio |

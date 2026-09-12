@@ -310,11 +310,11 @@ Superseding the earlier list, now ordered against the role table above.
 | ~~5~~ | ~~**`export.platform`**~~ | Delivery | **Done.** |
 | ~~6~~ | ~~**`video.retime`**~~ | Editor | **Done** — `minterpolate`, not optical flow, but real interpolation. |
 | 7 | **`video.multicam`** — sync angles, switch between them | Editor | The one editor feature with no partial coverage at all. |
-| 8 | **`video.mask` + `analyze.track`** | VFX | Masks are the last big creative unlock; tracking makes them usable on moving shots. |
+| ~~8~~ | ~~**`video.mask`**~~ | VFX | **Done** — rect/ellipse, feather, keyframed. Tracking still open. |
 | 9 | **`edit.match`** — shot matching | Colourist | The most visible difference between amateur and professional cutting. |
-| 10 | **`subtitle.translate` + `voice.dub`** | Subtitler | Localisation. Pairs with the existing TTS stack. |
+| ~~10~~ | ~~**`voice.dub`**~~ | Subtitler | **Done.** `subtitle.translate` still open. |
 | 11 | **Project state + render cache** | All | Makes long timelines workable and re-runs incremental. |
-| 12 | **EDL / FCPXML export** | All | Only meaningful once the edit surface is stable. |
+| ~~12~~ | ~~**EDL export**~~ | All | **Done** — `delivery.edl`. FCPXML still open. |
 
 ## What I would *not* build
 
