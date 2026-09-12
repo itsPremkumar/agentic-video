@@ -66,6 +66,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reported `API_KEY_MISSING` while the download plugins reported `MISSING_API_KEY`. Both are now
   `MISSING_API_KEY` — an agent can match on one code.
 - `AGENTS.md` still said "87 plugins"; it is 124.
+- **`motion.remotion` claimed "the full Remotion API" but supported exactly one package.** Only
+  `remotion` and `react` were resolvable: `@remotion/bundler` aliases those two explicitly and sets
+  no `resolve.modules`, so every other import is resolved by walking up from the entry point — and
+  the bundle was built under `%TEMP%`, which has no `node_modules` above it. A composition
+  importing `@remotion/transitions` failed to bundle *with the package installed*. The bundle now
+  builds under the project root, and seven companion packages are installed.
+- **`staticFile()` could not resolve anything.** `publicDir` was created and never populated, so no
+  composition could use a local image, video, audio file or font. New `assets` input copies media
+  in.
+- **Compositions were limited to a single file.** New `files` input writes extra modules, so a
+  composition can be split up.
 - **`render.timeline`'s `audioVolume` input was declared but never used.** The schema accepted it,
   the docs described it, and it did nothing. It now applies to an external audio bed in both
   render paths.
