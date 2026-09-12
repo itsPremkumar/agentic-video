@@ -2,7 +2,7 @@
   "name": "agentic-video",
   "version": "1.0.0",
   "type": "module",
-  "description": "Pure, modular, plugin-based video editing and creation toolkit. No orchestrator, no LLM, no autonomous pipeline — an external agent drives one plugin at a time.",
+  "description": "Pure, modular, plugin-based video editing and creation toolkit. No orchestrator, no LLM, no autonomous pipeline \u2014 an external agent drives one plugin at a time.",
   "license": "MIT",
   "author": "itsPremkumar",
   "keywords": [
@@ -40,6 +40,7 @@
     "typecheck": "tsc --noEmit",
     "plugins": "tsx bin/forge.ts list",
     "gen:index": "tsx scripts/gen-plugin-index.ts",
+    "gen:skill": "tsx scripts/gen-skill-docs.ts",
     "check": "tsx scripts/check-plugins.ts",
     "test": "npm run typecheck && npm run check",
     "setup:voicebox": "node scripts/setup-voicebox.mjs"

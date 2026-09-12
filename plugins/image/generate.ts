@@ -47,7 +47,7 @@ function getKey(name: string, input: Record<string, unknown>): string {
     const fromEnv = process.env[name];
     if (fromEnv) return fromEnv;
     throw new PluginFailure({
-        code: 'API_KEY_MISSING',
+        code: 'MISSING_API_KEY',
         message: `${name} is required for image.generate.`,
         reason: 'No API key was provided in input.apiKey or in the environment.',
         retryable: true,

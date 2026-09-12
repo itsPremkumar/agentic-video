@@ -245,6 +245,256 @@ function confettiBurst(): string {
         "}\n";
 }
 
+/**
+ * Small helper: every builder is a list of TSX lines so the templates stay
+ * readable here. Double-quoted TS strings mean backticks and `${}` inside the
+ * generated TSX stay literal — no escaping gymnastics.
+ */
+function tsx(...lines: string[]): string {
+    return header() + lines.join('\n') + '\n';
+}
+
+function statCounter(): string {
+    return tsx(
+        "type P = { label: string; value: number; suffix: string; accent: string; bg: string };",
+        "export default function StatCounter({ label, value, suffix, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  const p = spring({ frame, fps, config: { damping: 200 } });",
+        "  const n = Math.round(interpolate(p, [0, 1], [0, value]));",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', alignItems: 'center', fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ fontSize: 190, fontWeight: 800, color: accent, lineHeight: 1 }}>{n}{suffix}</div>",
+        "      <div style={{ fontSize: 38, color: '#94a3b8', marginTop: 20, letterSpacing: 5, textTransform: 'uppercase' }}>{label}</div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function quoteCard(): string {
+    return tsx(
+        "type P = { quote: string; author: string; role: string; accent: string; bg: string };",
+        "export default function QuoteCard({ quote, author, role, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  const s = spring({ frame, fps, config: { damping: 16, mass: 0.7 } });",
+        "  const op = interpolate(frame, [0, 14], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', padding: 120, fontFamily: 'Georgia, serif' }}>",
+        "      <div style={{ transform: `scale(${0.94 + s * 0.06})`, opacity: op }}>",
+        "        <div style={{ fontSize: 110, color: accent, lineHeight: 1 }}>{'\u201C'}</div>",
+        "        <div style={{ fontSize: 58, color: '#f1f5f9', lineHeight: 1.35, marginTop: -20 }}>{quote}</div>",
+        "        <div style={{ marginTop: 48, display: 'flex', alignItems: 'center', gap: 20, fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "          <div style={{ width: 6, height: 56, background: accent, borderRadius: 3 }} />",
+        "          <div>",
+        "            <div style={{ fontSize: 34, color: '#f8fafc', fontWeight: 600 }}>{author}</div>",
+        "            <div style={{ fontSize: 24, color: '#94a3b8', marginTop: 4 }}>{role}</div>",
+        "          </div>",
+        "        </div>",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function splitScreen(): string {
+    return tsx(
+        "type P = { left: string; right: string; leftLabel: string; rightLabel: string; accent: string; bg: string };",
+        "export default function SplitScreen({ left, right, leftLabel, rightLabel, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const wipe = interpolate(frame, [10, 40], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic) });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', background: '#0b1220' }}>",
+        "        <div style={{ fontSize: 62, color: '#e2e8f0', fontWeight: 700 }}>{left}</div>",
+        "        <div style={{ fontSize: 26, color: '#64748b', marginTop: 14, letterSpacing: 3 }}>{leftLabel}</div>",
+        "      </AbsoluteFill>",
+        "      <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', background: '#111c2e', clipPath: `inset(0 0 0 ${wipe * 50}%)` }}>",
+        "        <div style={{ fontSize: 62, color: '#f8fafc', fontWeight: 700 }}>{right}</div>",
+        "        <div style={{ fontSize: 26, color: accent, marginTop: 14, letterSpacing: 3 }}>{rightLabel}</div>",
+        "      </AbsoluteFill>",
+        "      <div style={{ position: 'absolute', left: `${wipe * 50}%`, top: 0, bottom: 0, width: 4, background: accent }} />",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function typewriter(): string {
+    return tsx(
+        "type P = { text: string; accent: string; bg: string };",
+        "export default function Typewriter({ text, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps, durationInFrames } = useVideoConfig();",
+        "  const total = text.length;",
+        "  const shown = Math.min(total, Math.floor(interpolate(frame, [0, durationInFrames * 0.8], [0, total], { extrapolateRight: 'clamp' })));",
+        "  const blink = Math.floor(frame / Math.max(1, Math.round(fps / 2))) % 2 === 0;",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', padding: 110, fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>",
+        "      <div style={{ fontSize: 60, color: '#e2e8f0', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>",
+        "        {text.slice(0, shown)}",
+        "        <span style={{ color: accent, opacity: blink ? 1 : 0 }}>{'\u2588'}</span>",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function timeline(): string {
+    return tsx(
+        "type P = { title: string; milestones: { label: string; value: string }[]; accent: string; bg: string };",
+        "export default function Timeline({ title, milestones, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, padding: 110, fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ fontSize: 52, color: '#f8fafc', fontWeight: 700, marginBottom: 70 }}>{title}</div>",
+        "      <div style={{ position: 'relative', paddingLeft: 56 }}>",
+        "        <div style={{ position: 'absolute', left: 12, top: 10, bottom: 10, width: 3, background: '#1e293b' }} />",
+        "        {milestones.map((m, i) => {",
+        "          const s = spring({ frame: frame - i * 8, fps, config: { damping: 18 } });",
+        "          return (",
+        "            <div key={i} style={{ display: 'flex', gap: 34, marginBottom: 46, opacity: s, transform: `translateX(${(1 - s) * -30}px)` }}>",
+        "              <div style={{ width: 26, height: 26, borderRadius: 13, background: accent, marginTop: 8, flexShrink: 0 }} />",
+        "              <div>",
+        "                <div style={{ fontSize: 40, color: '#f1f5f9', fontWeight: 600 }}>{m.label}</div>",
+        "                <div style={{ fontSize: 26, color: '#94a3b8', marginTop: 6 }}>{m.value}</div>",
+        "              </div>",
+        "            </div>",
+        "          );",
+        "        })}",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function listReveal(): string {
+    return tsx(
+        "type P = { title: string; items: string[]; accent: string; bg: string };",
+        "export default function ListReveal({ title, items, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, padding: 110, fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ fontSize: 56, color: '#f8fafc', fontWeight: 700, marginBottom: 56 }}>{title}</div>",
+        "      {items.map((item, i) => {",
+        "        const s = spring({ frame: frame - 10 - i * 10, fps, config: { damping: 17 } });",
+        "        return (",
+        "          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 34, opacity: s, transform: `translateY(${(1 - s) * 24}px)` }}>",
+        "            <div style={{ width: 12, height: 12, borderRadius: 6, background: accent, flexShrink: 0 }} />",
+        "            <div style={{ fontSize: 42, color: '#e2e8f0' }}>{item}</div>",
+        "          </div>",
+        "        );",
+        "      })}",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function waveform(): string {
+    return tsx(
+        "type P = { accent: string; bg: string; bars: number };",
+        "export default function Waveform({ accent, bg, bars }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const n = Math.max(8, Math.min(96, bars));",
+        "  const arr = Array.from({ length: n });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', alignItems: 'center' }}>",
+        "      <div style={{ display: 'flex', alignItems: 'center', gap: 8, height: 420 }}>",
+        "        {arr.map((_, i) => {",
+        "          const h = 40 + Math.abs(Math.sin((frame + i * 7) * 0.12 + i)) * 340;",
+        "          return <div key={i} style={{ width: 12, height: h, background: accent, borderRadius: 6, opacity: 0.35 + (h / 420) * 0.65 }} />;",
+        "        })}",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function glitchTitle(): string {
+    return tsx(
+        "type P = { text: string; accent: string; bg: string };",
+        "export default function GlitchTitle({ text, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const glitch = frame < 26 ? (frame % 6 < 3 ? 1 : -1) * (26 - frame) * 1.4 : 0;",
+        "  const settle = interpolate(frame, [26, 46], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', alignItems: 'center', fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ position: 'relative' }}>",
+        "        <div style={{ position: 'absolute', fontSize: 130, fontWeight: 800, color: '#ef4444', transform: `translate(${glitch}px, ${-glitch * 0.4}px)`, opacity: 0.75 * settle + (frame < 26 ? 0.75 : 0) }}>{text}</div>",
+        "        <div style={{ position: 'absolute', fontSize: 130, fontWeight: 800, color: '#22d3ee', transform: `translate(${-glitch}px, ${glitch * 0.4}px)`, opacity: 0.75 * settle + (frame < 26 ? 0.75 : 0) }}>{text}</div>",
+        "        <div style={{ fontSize: 130, fontWeight: 800, color: '#f8fafc', letterSpacing: -2 }}>{text}</div>",
+        "      </div>",
+        "      <div style={{ width: 180, height: 5, background: accent, marginTop: 40, borderRadius: 3 }} />",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function testimonial(): string {
+    return tsx(
+        "type P = { quote: string; name: string; role: string; initials: string; accent: string; bg: string };",
+        "export default function Testimonial({ quote, name, role, initials, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  const s = spring({ frame, fps, config: { damping: 18 } });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', alignItems: 'center', fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ width: 860, background: '#0f172a', borderRadius: 28, padding: 72, transform: `translateY(${(1 - s) * 40}px)`, opacity: s }}>",
+        "        <div style={{ display: 'flex', alignItems: 'center', gap: 26, marginBottom: 36 }}>",
+        "          <div style={{ width: 78, height: 78, borderRadius: 39, background: accent, color: '#06121f', fontSize: 32, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{initials}</div>",
+        "          <div>",
+        "            <div style={{ fontSize: 34, color: '#f8fafc', fontWeight: 600 }}>{name}</div>",
+        "            <div style={{ fontSize: 24, color: '#94a3b8', marginTop: 4 }}>{role}</div>",
+        "          </div>",
+        "        </div>",
+        "        <div style={{ fontSize: 38, color: '#e2e8f0', lineHeight: 1.45, fontStyle: 'italic' }}>{'\u201C'}{quote}{'\u201D'}</div>",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
+function productCard(): string {
+    return tsx(
+        "type P = { product: string; price: string; features: string[]; accent: string; bg: string };",
+        "export default function ProductCard({ product, price, features, accent, bg }: P) {",
+        "  const frame = useCurrentFrame();",
+        "  const { fps } = useVideoConfig();",
+        "  const s = spring({ frame, fps, config: { damping: 16, mass: 0.8 } });",
+        "  return (",
+        "    <AbsoluteFill style={{ backgroundColor: bg, justifyContent: 'center', alignItems: 'center', fontFamily: 'Inter, system-ui, sans-serif' }}>",
+        "      <div style={{ width: 820, background: '#0f172a', borderRadius: 30, padding: 68, borderTop: `8px solid ${accent}`, transform: `scale(${0.92 + s * 0.08})`, opacity: s }}>",
+        "        <div style={{ fontSize: 30, color: accent, letterSpacing: 5, textTransform: 'uppercase' }}>New</div>",
+        "        <div style={{ fontSize: 66, color: '#f8fafc', fontWeight: 800, marginTop: 16 }}>{product}</div>",
+        "        <div style={{ fontSize: 54, color: accent, fontWeight: 700, marginTop: 12 }}>{price}</div>",
+        "        <div style={{ marginTop: 40 }}>",
+        "          {features.map((f, i) => {",
+        "            const fs = spring({ frame: frame - 20 - i * 8, fps, config: { damping: 18 } });",
+        "            return (",
+        "              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 20, opacity: fs, transform: `translateX(${(1 - fs) * -20}px)` }}>",
+        "                <div style={{ color: accent, fontSize: 30 }}>{'\u2713'}</div>",
+        "                <div style={{ fontSize: 34, color: '#cbd5e1' }}>{f}</div>",
+        "              </div>",
+        "            );",
+        "          })}",
+        "        </div>",
+        "      </div>",
+        "    </AbsoluteFill>",
+        "  );",
+        "}",
+    );
+}
+
 export const TEMPLATES: Record<string, { defaults: Record<string, unknown>; build: () => string }> = {
     'lower-third': { defaults: { name: 'Jamie Pine', title: 'Voicebox author', accent: '#38bdf8', bg: '#06121f' }, build: lowerThird },
     'title-card': { defaults: { line1: 'Ocean', line2: 'Plastic', accent: '#38bdf8', bg: '#06121f' }, build: titleCard },
@@ -256,6 +506,16 @@ export const TEMPLATES: Record<string, { defaults: Record<string, unknown>; buil
     'logo-reveal': { defaults: { brand: 'VIDEFORGE', accent: '#38bdf8', bg: '#06121f' }, build: logoReveal },
     'spectrum-visualizer': { defaults: { accent: '#38bdf8', bg: '#06121f', bars: 32 }, build: spectrumVisualizer },
     'confetti': { defaults: { accent: '#38bdf8', bg: '#06121f' }, build: confettiBurst },
+    'stat-counter': { defaults: { label: 'Videos rendered', value: 128, suffix: 'k', accent: '#38bdf8', bg: '#06121f' }, build: statCounter },
+    'quote-card': { defaults: { quote: 'The best way to predict the future is to invent it.', author: 'Alan Kay', role: 'Computer scientist', accent: '#38bdf8', bg: '#06121f' }, build: quoteCard },
+    'split-screen': { defaults: { left: 'Before', right: 'After', leftLabel: 'THEN', rightLabel: 'NOW', accent: '#38bdf8', bg: '#06121f' }, build: splitScreen },
+    'typewriter': { defaults: { text: 'This text types itself out, one character at a time.', accent: '#38bdf8', bg: '#06121f' }, build: typewriter },
+    'timeline': { defaults: { title: 'How we got here', milestones: [{ label: 'Started', value: 'March 2026' }, { label: 'First release', value: 'June 2026' }, { label: 'v1.0', value: 'September 2026' }], accent: '#38bdf8', bg: '#06121f' }, build: timeline },
+    'list-reveal': { defaults: { title: 'What you get', items: ['124 plugins', 'No orchestrator', 'Explicit failures'], accent: '#38bdf8', bg: '#06121f' }, build: listReveal },
+    'waveform': { defaults: { accent: '#38bdf8', bg: '#06121f', bars: 40 }, build: waveform },
+    'glitch-title': { defaults: { text: 'AGENTIC', accent: '#38bdf8', bg: '#06121f' }, build: glitchTitle },
+    'testimonial': { defaults: { quote: 'It never silently swapped a provider on me. That is the whole point.', name: 'Jamie Pine', role: 'Platform engineer', initials: 'JP', accent: '#38bdf8', bg: '#06121f' }, build: testimonial },
+    'product-card': { defaults: { product: 'Studio Plan', price: '$19/mo', features: ['Unlimited renders', '4K export', 'No watermark'], accent: '#38bdf8', bg: '#06121f' }, build: productCard },
 };
 
 export const TEMPLATE_NAMES = Object.keys(TEMPLATES);

@@ -1,0 +1,14 @@
+{
+  "_comment": "Stock imagery + narration + music + captions. Run: npm run forge steps skills/agentic-video/workflows/pexels-documentary.json",
+  "_prerequisites": ["ffmpeg on PATH", "PEXELS_API_KEY in .env — or change provider to openverse / wikimedia for keyless"],
+  "steps": [
+    { "plugin": "image.download", "input": { "provider": "pexels", "query": "ocean waves", "count": 6, "orientation": "landscape", "prefix": "sea" } },
+    { "plugin": "voice.tts", "input": { "text": "Every year, twelve million tonnes of plastic enter the ocean.", "voice": "en-US-AriaNeural", "out": "narration.wav" } },
+    { "_comment": "key is a NOTE name — A, not Am.", "plugin": "music.generate", "input": { "key": "A", "bpm": 84, "bars": 16, "out": "bed.wav" } },
+    { "plugin": "audio.merge", "input": { "sources": ["REPLACE-narration.wav", "REPLACE-bed.wav"], "duck": true, "out": "mix.wav" } },
+    { "plugin": "video.from_images", "input": { "dir": "REPLACE-download-dir", "durationPerImage": 3, "kenBurns": true, "width": 1920, "height": 1080, "out": "reel.mp4" } },
+    { "plugin": "audio.mux", "input": { "video": "REPLACE-reel.mp4", "audio": "REPLACE-mix.wav", "out": "reel-vo.mp4" } },
+    { "plugin": "export.probe", "input": { "file": "REPLACE-reel-vo.mp4" } },
+    { "plugin": "qc.gate", "input": { "file": "REPLACE-reel-vo.mp4" } }
+  ]
+}

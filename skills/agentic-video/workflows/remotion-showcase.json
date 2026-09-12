@@ -1,0 +1,13 @@
+{
+  "_comment": "Pure motion graphics — no photography, no downloads. 20 templates available. Run: npm run forge steps skills/agentic-video/workflows/remotion-showcase.json",
+  "_prerequisites": ["ffmpeg on PATH", "a Chromium install", "npm install (Remotion packages)"],
+  "_note": "First render costs ~25s of bundling; each subsequent one ~20s. That is normal, not a failure.",
+  "steps": [
+    { "plugin": "motion.remotion_template", "input": { "template": "glitch-title", "text": "AGENTIC", "durationInFrames": 60, "width": 1080, "height": 1080, "out": "01-title.mp4" } },
+    { "plugin": "motion.remotion_template", "input": { "template": "stat-counter", "label": "Videos rendered", "value": 128, "suffix": "k", "durationInFrames": 75, "width": 1080, "height": 1080, "out": "02-stat.mp4" } },
+    { "plugin": "motion.remotion_template", "input": { "template": "list-reveal", "title": "What you get", "items": ["124 plugins", "No orchestrator", "Explicit failures", "Four transports"], "durationInFrames": 90, "width": 1080, "height": 1080, "out": "03-list.mp4" } },
+    { "plugin": "motion.remotion_template", "input": { "template": "end-cta", "headline": "Thanks for watching", "subline": "Build something", "cta": "Subscribe", "durationInFrames": 75, "width": 1080, "height": 1080, "out": "04-cta.mp4" } },
+    { "plugin": "transitions.xfade", "input": { "sources": ["REPLACE-01-title.mp4", "REPLACE-02-stat.mp4", "REPLACE-03-list.mp4", "REPLACE-04-cta.mp4"], "transition": "fade", "duration": 0.5, "out": "showcase.mp4" } },
+    { "plugin": "export.probe", "input": { "file": "REPLACE-showcase.mp4" } }
+  ]
+}

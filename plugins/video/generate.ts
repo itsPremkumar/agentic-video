@@ -46,7 +46,7 @@ function getFalKey(input: Record<string, unknown>): string {
     const env = process.env.FAL_KEY;
     if (env) return env;
     throw new PluginFailure({
-        code: 'API_KEY_MISSING',
+        code: 'MISSING_API_KEY',
         message: 'FAL_KEY is required for video.generate.',
         retryable: true,
         hint: 'Get a key from https://fal.ai/dashboard/keys and put it in your .env (FAL_KEY=...).',

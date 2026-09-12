@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **An agent skill** at `skills/agentic-video/` — a single top-level entry point for driving the
+  whole toolkit: an 8-stage master workflow, a "kitchen sink" chain that uses every major
+  capability, five runnable `forge steps` files, and four prompt templates (plan, recover,
+  verify, author-Remotion).
+- `references/plugin-catalogue.md` and `references/remotion-templates.md` are **generated** from
+  the live code by `npm run gen:skill`, so they cannot drift.
+- **Ten new Remotion templates** (20 total): `stat-counter`, `quote-card`, `split-screen`,
+  `typewriter`, `timeline`, `list-reveal`, `waveform`, `glitch-title`, `testimonial`,
+  `product-card`.
 - `browser.open`, `browser.act`, `browser.record_flow`, `browser.scroll_capture`
   — Playwright-backed automation: navigate, interact, record a real video of a
   session, and capture scroll stills. Playwright replaces the previous ad-hoc
@@ -17,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `render.timeline` accepts still images: a `.png`/`.jpg`/`.webp` clip is held
   for a default 3 s (`-loop 1`) instead of producing a 262-byte clip with no
   video stream.
+
+### Fixed
+
+- Two different failure codes for the same condition: `image.generate` and `video.generate`
+  reported `API_KEY_MISSING` while the download plugins reported `MISSING_API_KEY`. Both are now
+  `MISSING_API_KEY` — an agent can match on one code.
+- `AGENTS.md` still said "87 plugins"; it is 124.
+
 
 ### Changed
 

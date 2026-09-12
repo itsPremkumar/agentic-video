@@ -1,0 +1,11 @@
+{
+  "_comment": "Capture a live site, then turn the stills into a video. Run: npm run forge steps skills/agentic-video/workflows/website-tour.json",
+  "_prerequisites": ["ffmpeg on PATH", "npx playwright install chromium"],
+  "_note": "browser.record_flow launches headed on purpose — Chrome Headless Shell cannot record video. Use xvfb-run on a server.",
+  "steps": [
+    { "plugin": "browser.screenshot", "input": { "url": "https://example.com", "fullPage": true, "out": "site-full.png" } },
+    { "plugin": "browser.scroll_capture", "input": { "url": "https://example.com", "steps": 6, "out": "scroll" } },
+    { "plugin": "video.from_images", "input": { "dir": "REPLACE-scroll-dir", "durationPerImage": 1.5, "kenBurns": true, "transition": "fade", "out": "tour.mp4" } },
+    { "plugin": "export.probe", "input": { "file": "REPLACE-tour.mp4" } }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "_comment": "The reference workflow: stock stills + stock footage + an authored HTML card + a website capture + Remotion motion graphics + voice + music + captions, assembled with transitions and verified. Run: npm run forge steps skills/agentic-video/workflows/kitchen-sink.json",
+  "_note": "Paths marked REPLACE must be filled in from the printed output of the step above. The runner stops at the first failure and substitutes nothing.",
+  "_prerequisites": ["ffmpeg on PATH", "PEXELS_API_KEY in .env (or swap provider to openverse/wikimedia)", "npx playwright install chromium"],
+  "steps": [
+    {
+      "plugin": "image.download",
+      "input": { "provider": "pexels", "query": "ocean waves aerial", "count": 4, "orientation": "landscape", "prefix": "sea" }
+    },
+    {
+      "plugin": "video.download",
+      "input": { "provider": "pexels", "query": "coastline drone", "count": 2, "prefix": "clip" }
+    },
+    {
+      "_comment": "Authored, not downloaded: an HTML/CSS title card rasterised in a real browser.",
+      "plugin": "image.create",
+      "input": {
+        "html": "<div class=\"c\"><h1>Ocean Plastic</h1><p>12 million tonnes every year</p></div>",
+        "css": ".c{width:1920px;height:1080px;background:#06121f;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:140px;font-family:system-ui}h1{font-size:120px;margin:0}p{font-size:48px;color:#38bdf8;margin-top:24px}",
+        "width": 1920,
+        "height": 1080,
+        "out": "title-card.png"
+      }
+    },
+    {
+      "plugin": "browser.screenshot",
+      "input": { "url": "https://example.com", "out": "site.png" }
+    },
+    {
+      "plugin": "motion.remotion_template",
+      "input": { "template": "stat-counter", "label": "Tonnes per year", "value": 12, "suffix": "M", "durationInFrames": 75, "width": 1920, "height": 1080, "out": "stat.mp4" }
+    },
+    {
+      "plugin": "motion.remotion_template",
+      "input": { "template": "lower-third", "name": "Narrator", "title": "Field report", "durationInFrames": 90, "width": 1920, "height": 1080, "out": "lower.mp4" }
+    },
+    {
+      "_comment": "Stills need motion: Ken Burns each one into its own clip.",
+      "plugin": "motion.effect",
+      "input": { "file": "REPLACE-title-card.png", "effect": "kenBurns", "duration": 4, "zoomTo": 1.15, "width": 1920, "height": 1080, "out": "card-move.mp4" }
+    },
+    {
+      "plugin": "voice.tts",
+      "input": { "text": "Every year, twelve million tonnes of plastic enter the ocean.", "voice": "en-US-AriaNeural", "out": "narration.wav" }
+    },
+    {
+      "_comment": "key is a NOTE name (A), not a key signature (Am).",
+      "plugin": "music.generate",
+      "input": { "key": "A", "bpm": 84, "bars": 16, "out": "bed.wav" }
+    },
+    {
+      "plugin": "audio.merge",
+      "input": { "sources": ["REPLACE-narration.wav", "REPLACE-bed.wav"], "duck": true, "out": "mix.wav" }
+    },
+    {
+      "_comment": "cues must be a real array — pass this file via --json if running standalone.",
+      "plugin": "subtitle.create",
+      "input": {
+        "cues": [
+          { "start": 0, "end": 3, "text": "Every year," },
+          { "start": 3, "end": 6, "text": "twelve million tonnes" },
+          { "start": 6, "end": 9, "text": "of plastic enter the ocean." }
+        ],
+        "format": "srt",
+        "out": "subs.srt"
+      }
+    },
+    {
+      "plugin": "render.timeline",
+      "input": {
+        "clips": [
+          { "src": "REPLACE-card-move.mp4", "duration": 4 },
+          { "src": "REPLACE-stat.mp4" },
+          { "src": "REPLACE-clip_1.mp4", "duration": 5 },
+          { "src": "REPLACE-lower.mp4" },
+          { "src": "REPLACE-sea_1.jpg", "duration": 3 }
+        ],
+        "transition": "fade",
+        "transitionDuration": 0.5,
+        "audio": "REPLACE-mix.wav",
+        "out": "kitchen-sink.mp4"
+      }
+    },
+    {
+      "plugin": "subtitle.burn",
+      "input": { "video": "REPLACE-kitchen-sink.mp4", "subtitles": "REPLACE-subs.srt", "out": "kitchen-sink-captioned.mp4" }
+    },
+    {
+      "plugin": "export.probe",
+      "input": { "file": "REPLACE-kitchen-sink-captioned.mp4" }
+    },
+    {
+      "plugin": "qc.gate",
+      "input": { "file": "REPLACE-kitchen-sink-captioned.mp4" }
+    }
+  ]
+}

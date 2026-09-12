@@ -37,10 +37,12 @@ jobs:
 
       - run: npm run gen:index
 
+      - run: npm run gen:skill
+
       - name: Fail if generated files changed
         run: |
-          git diff --exit-code -- plugins/INDEX.md README.md || {
-            echo "::error::plugins/INDEX.md or the README category block is stale."
-            echo "Run 'npm run gen:index' and commit the result."
+          git diff --exit-code -- plugins/INDEX.md README.md skills/ || {
+            echo "::error::Generated docs are stale."
+            echo "Run 'npm run gen:index' and 'npm run gen:skill', then commit the result."
             exit 1
           }

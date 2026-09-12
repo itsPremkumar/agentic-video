@@ -23,23 +23,39 @@ export default definePlugin({
     id: 'motion.remotion_template',
     name: 'Render a reusable Remotion template',
     category: 'render',
-    description: 'Render a prebuilt Remotion composition (lower-third, title-card, end-cta, countdown, progress-bar, kinetic-text) by name.',
+    description: 'Render a prebuilt Remotion composition (lower-third, title-card, end-cta, countdown, progress-bar, kinetic-text, bar-chart, logo-reveal, spectrum, confetti, stat-counter, quote-card, split-screen, typewriter, timeline, list-reveal, waveform, glitch-title, testimonial, product-card) by name.',
     inputs: {
         template: S.string('Template name', { required: true, enum: TEMPLATE_NAMES }),
         name: S.string('lower-third name prop'),
-        title: S.string('lower-third title prop'),
+        title: S.string('lower-third title; timeline / list-reveal / bar-chart heading'),
         line1: S.string('title-card line 1'),
         line2: S.string('title-card line 2'),
         headline: S.string('end-cta headline'),
         subline: S.string('end-cta subline'),
         cta: S.string('end-cta button label'),
         from: S.int('countdown start number', { default: 10, minimum: 1, maximum: 99 }),
-        label: S.string('progress-bar label'),
+        label: S.string('progress-bar or stat-counter caption'),
         percent: S.number('progress-bar percent (0-100)', { default: 75, minimum: 0, maximum: 100 }),
         words: S.array('kinetic-text word list'),
         bars: S.array('bar-chart bars: array of {label, value}', { default: undefined }),
-        barCount: S.int('spectrum-visualizer bar count', { default: 32, minimum: 8, maximum: 64 }),
+        barCount: S.int('spectrum-visualizer / waveform bar count', { default: 32, minimum: 8, maximum: 64 }),
         brand: S.string('logo-reveal brand name'),
+        value: S.number('stat-counter target number', { default: 128, minimum: 0 }),
+        suffix: S.string('stat-counter suffix, e.g. k / % / x', { default: 'k' }),
+        quote: S.string('quote-card / testimonial quote text'),
+        author: S.string('quote-card attribution'),
+        role: S.string('quote-card / testimonial role line'),
+        initials: S.string('testimonial avatar initials', { default: 'JP' }),
+        left: S.string('split-screen left panel text'),
+        right: S.string('split-screen right panel text'),
+        leftLabel: S.string('split-screen left caption'),
+        rightLabel: S.string('split-screen right caption'),
+        text: S.string('typewriter / glitch-title text'),
+        items: S.array('list-reveal bullet list'),
+        milestones: S.array('timeline milestones: array of {label, value}'),
+        product: S.string('product-card product name'),
+        price: S.string('product-card price line'),
+        features: S.array('product-card feature bullets'),
         accent: S.string('Accent colour (hex)', { default: '#38bdf8' }),
         bg: S.string('Background colour (hex)', { default: '#06121f' }),
         durationInFrames: S.int('Length in frames', { default: 90, minimum: 1 }),
@@ -85,6 +101,46 @@ export default definePlugin({
             // spectrum uses bars as a number (count), bar-chart uses array — distinguish.
             const bc = input.barCount !== undefined ? Number(input.barCount) : undefined;
             if (bc !== undefined) props.bars = bc;
+        } else if (template === 'stat-counter') {
+            if (input.label) props.label = String(input.label);
+            if (input.value !== undefined) props.value = Number(input.value);
+            if (input.suffix !== undefined) props.suffix = String(input.suffix);
+        } else if (template === 'quote-card') {
+            if (input.quote) props.quote = String(input.quote);
+            if (input.author) props.author = String(input.author);
+            if (input.role) props.role = String(input.role);
+        } else if (template === 'split-screen') {
+            if (input.left) props.left = String(input.left);
+            if (input.right) props.right = String(input.right);
+            if (input.leftLabel) props.leftLabel = String(input.leftLabel);
+            if (input.rightLabel) props.rightLabel = String(input.rightLabel);
+        } else if (template === 'typewriter') {
+            if (input.text) props.text = String(input.text);
+        } else if (template === 'timeline') {
+            if (input.title) props.title = String(input.title);
+            if (Array.isArray(input.milestones) && (input.milestones as unknown[]).length > 0) {
+                props.milestones = input.milestones as { label: string; value: string }[];
+            }
+        } else if (template === 'list-reveal') {
+            if (input.title) props.title = String(input.title);
+            if (Array.isArray(input.items) && (input.items as unknown[]).length > 0) {
+                props.items = (input.items as unknown[]).map(String);
+            }
+        } else if (template === 'waveform') {
+            if (input.barCount !== undefined) props.bars = Number(input.barCount);
+        } else if (template === 'glitch-title') {
+            if (input.text) props.text = String(input.text);
+        } else if (template === 'testimonial') {
+            if (input.quote) props.quote = String(input.quote);
+            if (input.name) props.name = String(input.name);
+            if (input.role) props.role = String(input.role);
+            if (input.initials) props.initials = String(input.initials);
+        } else if (template === 'product-card') {
+            if (input.product) props.product = String(input.product);
+            if (input.price) props.price = String(input.price);
+            if (Array.isArray(input.features) && (input.features as unknown[]).length > 0) {
+                props.features = (input.features as unknown[]).map(String);
+            }
         }
         if (input.accent) props.accent = String(input.accent);
         if (input.bg) props.bg = String(input.bg);

@@ -13,7 +13,7 @@ honestly.
 
 1. **Discover before you promise.**
    ```
-   forge list              # 87 plugins, no orchestration
+   forge list              # 124 plugins, no orchestration
    forge describe <id>     # exact inputs, defaults, enum, what each field means
    ```
    Read `forge describe` before you commit to a plugin. The defaults are
@@ -305,3 +305,25 @@ HTTP endpoints:
 MCP exposes every plugin as one tool. `tools/call` returns the formatted
   
 ack in `content[].text` and `isError: true|false`.
+
+---
+
+## The agent skill
+
+There is a complete skill for this project at [`skills/agentic-video/`](skills/agentic-video/).
+It is the fastest way to get oriented — start with `SKILL.md`.
+
+```
+skills/agentic-video/
+├── SKILL.md                       start here: the 8-stage master workflow
+├── references/
+│   ├── plugin-catalogue.md        all 124 plugins by category  (generated)
+│   ├── remotion-templates.md      all 20 Remotion templates    (generated)
+│   ├── providers.md               stock / AI / TTS sources and keys
+│   ├── failure-codes.md           every failure code and what to do
+│   └── recipes.md                 copy-paste end-to-end chains
+├── workflows/                     runnable `forge steps` files
+└── prompts/                       prompt templates (plan, recover, verify, author)
+```
+
+The two generated references are rebuilt with `npm run gen:skill`; CI fails if they drift.

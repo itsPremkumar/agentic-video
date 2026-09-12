@@ -1,0 +1,32 @@
+{
+  "_comment": "Author a graphic in HTML/CSS, rasterise it, give it motion. No stock, no keys, no AI. Run: npm run forge steps skills/agentic-video/workflows/html-to-video.json",
+  "_prerequisites": ["ffmpeg on PATH", "a Chromium install for image.create"],
+  "steps": [
+    {
+      "plugin": "image.create",
+      "input": {
+        "html": "<div class=\"c\"><h1>Ocean Plastic</h1><p>12 million tonnes every year</p></div>",
+        "css": ".c{width:1080px;height:1920px;background:#06121f;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:120px;font-family:system-ui}h1{font-size:110px;margin:0}p{font-size:44px;color:#38bdf8;margin-top:20px}",
+        "width": 1080,
+        "height": 1920,
+        "out": "card.png"
+      }
+    },
+    {
+      "plugin": "motion.effect",
+      "input": {
+        "file": "REPLACE-card.png",
+        "effect": "kenBurns",
+        "duration": 5,
+        "zoomTo": 1.15,
+        "width": 1080,
+        "height": 1920,
+        "out": "card-move.mp4"
+      }
+    },
+    {
+      "plugin": "export.probe",
+      "input": { "file": "REPLACE-card-move.mp4" }
+    }
+  ]
+}
