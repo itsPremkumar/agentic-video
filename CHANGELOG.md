@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`video.transform`** — keyframed scale / position / rotation, composited onto a background.
+  This was the biggest gap in the toolkit: everything could assemble and process clips, but
+  nothing could *animate* one, which is what separates assembling assets from editing them.
+  Unlocks animated picture-in-picture, push-ins on footage, sliding titles and dynamic crops.
+  Keyframes are interpolated by summing clamped ramps into an ffmpeg expression in `t`, so any
+  number of keyframes works without generating intermediate clips. `ease` is `linear` or
+  `smooth` (smoothstep). Opacity is constant-only and says so loudly if you animate it —
+  `colorchannelmixer` has no `t` variable and `geq` would recompute every pixel of every frame.
+- **`audio.eq`** — parametric EQ with bands, high/low-pass, noise gate, compressor and optional
+  loudnorm. `audio.master` is a fixed chain; this is the control it lacked. Verified: a voiceover
+  moved from −20.4 to −16.3 LUFS through the chain.
+- **`docs/ROADMAP.md`** — an honest capability audit against what "advanced editing" requires,
+  with the remaining gaps ordered by (creative unlock ÷ effort).
 - **`edit.beat_cut`** — `audio.beat` detected a beat grid but nothing consumed it, so cutting on
   the beat meant re-deriving the arithmetic by hand. This turns the grid into an explicit clip
   list for `render.timeline`, so every cut lands on an onset (or beat). It decides nothing: same

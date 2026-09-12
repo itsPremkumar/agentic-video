@@ -46,7 +46,10 @@ for (const c of [...byCategory.keys()].sort()) {
     for (const p of byCategory.get(c)!) {
         const m = p.manifest;
         const desc = String(m.description ?? '').split('\n')[0].replace(/\|/g, '\\|');
-        L.push(`| \`${m.id}\` | ${desc} | ${(m.outputs ?? []).join(', ')} |`);
+        // outputs are OutputSpec objects, not strings — joining them directly
+        // renders "[object Object]".
+        const outs = (m.outputs ?? []).map((o) => o?.kind).filter(Boolean).join(', ');
+        L.push(`| \`${m.id}\` | ${desc} | ${outs} |`);
     }
     L.push('');
 }

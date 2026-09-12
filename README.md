@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml/badge.svg)](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
-[![Plugins: 125](https://img.shields.io/badge/plugins-125-blue.svg)](plugins/INDEX.md)
+[![Plugins: 127](https://img.shields.io/badge/plugins-127-blue.svg)](plugins/INDEX.md)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
 
 A pure plugin-based toolkit for agentic video editing and creation. An external
@@ -71,7 +71,7 @@ cd agentic-video
 npm install
 cp .env.example .env                # add FAL_KEY / REPLICATE_API_TOKEN if you want AI plugins
 
-npm run forge list                   # list every plugin (125)
+npm run forge list                   # list every plugin (127)
 npm run forge describe image.resize  # show a plugin's inputs / outputs
 npm run forge run image.resize --input src=input.png --input width=1080 --input height=1920
 npm run forge steps examples/ocean-reel.json    # replay an explicit step list
@@ -111,7 +111,7 @@ full setup.
                 └── core/python.ts      Python plugin bridge
                 │
                 v
-        plugins/**  125 plugins, one file each
+        plugins/**  127 plugins, one file each
 ```
 
 Two rules make the whole thing predictable:
@@ -128,7 +128,7 @@ Two rules make the whole thing predictable:
 ```
 agentic-video/
 ├── core/            plugin contract: loader, registry, runner, media, artifacts
-├── plugins/         every capability (125) — see plugins/README.md
+├── plugins/         every capability (127) — see plugins/README.md
 │   ├── INDEX.md     generated catalogue: id → one-liner → engine → file
 │   └── _shared/     shared code, never registered as plugins
 ├── python/          Python bridge (run_plugin.py) + forge_py runtime
@@ -168,7 +168,7 @@ the code slug is `agenticvideo`.
 | Category | Count | Plugins |
 |---|---|---|
 | `analyze` | 9 | `analyze.scene_audit`, `analyze.video`, `audio.onset`, `image.aesthetic`, `image.dedup`, `image.relevance`, `text.script_parse`, `video.dedup`, `video.scene_detect` |
-| `audio` | 15 | `audio.beat`, `audio.denoise`, `audio.duck`, `audio.fade`, `audio.info`, `audio.lufs_for_platform`, `audio.master`, `audio.merge`, `audio.mux`, `audio.normalize`, `audio.remove_silence`, `audio.sfx`, `audio.speed`, `audio.trim`, `audio.volume` |
+| `audio` | 16 | `audio.beat`, `audio.denoise`, `audio.duck`, `audio.eq`, `audio.fade`, `audio.info`, `audio.lufs_for_platform`, `audio.master`, `audio.merge`, `audio.mux`, `audio.normalize`, `audio.remove_silence`, `audio.sfx`, `audio.speed`, `audio.trim`, `audio.volume` |
 | `brand` | 3 | `brand.kit`, `text.hook`, `text.seo` |
 | `browser` | 2 | `browser.act`, `browser.open` |
 | `distribute` | 4 | `delivery.archive`, `delivery.publish`, `delivery.revision`, `export.derivative` |
@@ -182,7 +182,7 @@ the code slug is `agenticvideo`.
 | `render` | 6 | `motion.canvas`, `motion.effect`, `motion.remotion`, `motion.remotion_template`, `render.slideshow`, `render.timeline` |
 | `subtitle` | 5 | `subtitle.burn`, `subtitle.convert`, `subtitle.create`, `subtitle.karaoke`, `subtitle.syllable` |
 | `transitions` | 1 | `transitions.xfade` |
-| `video` | 24 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.merge`, `video.overlay`, `video.remove_silence`, `video.resize`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.trim`, `video.watermark` |
+| `video` | 25 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.merge`, `video.overlay`, `video.remove_silence`, `video.resize`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
 | `voice` | 11 | `voice.clone`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
 <!-- END GENERATED: categories -->
 
