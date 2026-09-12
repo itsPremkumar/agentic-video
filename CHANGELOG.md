@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`export.platform`** — encode to a named platform spec. `export.derivative` re-renders to
+  different aspect ratios but says nothing about bitrate, frame rate or loudness, which is exactly
+  what a platform rejects or re-encodes you for. Presets for YouTube (−14 LUFS), Shorts, Reels,
+  TikTok (−16), broadcast (EBU R128, −23, 25 fps), web and podcast. Never crops a master by
+  accident — it fits and letterboxes.
+- **`delivery.stems`** — package dialogue, music and effects as separate normalised stems plus a
+  full mix. This is **not** source separation and does not pretend to be: it takes the elements
+  your mix was built from, which is the reliable version of a broadcast deliverable.
+- **`video.retime`** — real slow motion. `video.speed` retimes by dropping or duplicating frames,
+  so 0.25x reads as stutter. This uses motion-compensated interpolation (`minterpolate`), with a
+  cheap blend mode and a plain mode for comparison.
+- **`analyze.search`** — find the shot, not just cut it. Searches any number of `voice.stt`
+  transcripts and returns the timecodes where a phrase occurs, with surrounding context. Plain text
+  by default (metacharacters escaped), regex when asked. Deterministic and model-free.
+- **`edit.match`** — the colourist's shot matching. Measures each shot against a reference and
+  applies a luminance, contrast, saturation correction towards it. First-order only.
 - **`text.screenplay`** — screenplay in, shot list out. The front of the pipeline, which was
   missing entirely: `text.script_parse` handles cue-block scripts (`[Visual: ...]`), a different
   format. This parses screenplay properly — INT./EXT. slug lines, character cues, parentheticals,

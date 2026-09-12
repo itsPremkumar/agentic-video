@@ -167,14 +167,14 @@ the code slug is `agenticvideo`.
 
 | Category | Count | Plugins |
 |---|---|---|
-| `analyze` | 12 | `analyze.continuity`, `analyze.scene_audit`, `analyze.scopes`, `analyze.video`, `audio.onset`, `image.aesthetic`, `image.dedup`, `image.relevance`, `text.screenplay`, `text.script_parse`, `video.dedup`, `video.scene_detect` |
+| `analyze` | 13 | `analyze.continuity`, `analyze.scene_audit`, `analyze.scopes`, `analyze.search`, `analyze.video`, `audio.onset`, `image.aesthetic`, `image.dedup`, `image.relevance`, `text.screenplay`, `text.script_parse`, `video.dedup`, `video.scene_detect` |
 | `audio` | 16 | `audio.beat`, `audio.denoise`, `audio.duck`, `audio.eq`, `audio.fade`, `audio.info`, `audio.lufs_for_platform`, `audio.master`, `audio.merge`, `audio.mux`, `audio.normalize`, `audio.remove_silence`, `audio.sfx`, `audio.speed`, `audio.trim`, `audio.volume` |
 | `brand` | 3 | `brand.kit`, `text.hook`, `text.seo` |
 | `browser` | 2 | `browser.act`, `browser.open` |
-| `distribute` | 4 | `delivery.archive`, `delivery.publish`, `delivery.revision`, `export.derivative` |
-| `edit` | 5 | `edit.beat_cut`, `edit.conform`, `edit.ops`, `edit.transcript_cut`, `video.scene_split` |
+| `distribute` | 5 | `delivery.archive`, `delivery.publish`, `delivery.revision`, `delivery.stems`, `export.derivative` |
+| `edit` | 6 | `edit.beat_cut`, `edit.conform`, `edit.match`, `edit.ops`, `edit.transcript_cut`, `video.scene_split` |
 | `effects` | 6 | `effects.color_grade`, `effects.look`, `effects.style`, `effects.video`, `image.remove_bg`, `video.denoise` |
-| `export` | 6 | `browser.extract`, `browser.pdf`, `export.contact_sheet`, `export.gif`, `export.probe`, `export.reframe` |
+| `export` | 7 | `browser.extract`, `browser.pdf`, `export.contact_sheet`, `export.gif`, `export.platform`, `export.probe`, `export.reframe` |
 | `fx` | 7 | `effects.genre`, `fx.chroma_key`, `fx.compare`, `fx.speed_ramp`, `fx.stabilize`, `fx.transition_effect`, `fx.vintage` |
 | `image` | 18 | `browser.mockup`, `browser.screenshot`, `browser.scroll_capture`, `image.canvas`, `image.convert`, `image.create`, `image.crop`, `image.download`, `image.filter`, `image.flip`, `image.generate`, `image.grade`, `image.info`, `image.resize`, `image.rotate`, `image.text`, `image.watermark`, `screen.shot` |
 | `music` | 2 | `music.download`, `music.generate` |
@@ -182,7 +182,7 @@ the code slug is `agenticvideo`.
 | `render` | 6 | `motion.canvas`, `motion.effect`, `motion.remotion`, `motion.remotion_template`, `render.slideshow`, `render.timeline` |
 | `subtitle` | 5 | `subtitle.burn`, `subtitle.convert`, `subtitle.create`, `subtitle.karaoke`, `subtitle.syllable` |
 | `transitions` | 1 | `transitions.xfade` |
-| `video` | 26 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
+| `video` | 27 | `browser.record`, `browser.record_flow`, `screen.record`, `video.animate`, `video.crop`, `video.download`, `video.extract_audio`, `video.extract_frames`, `video.fade`, `video.from_images`, `video.generate`, `video.grade`, `video.info`, `video.merge`, `video.overlay`, `video.proxy`, `video.remove_silence`, `video.resize`, `video.retime`, `video.reverse`, `video.rotate`, `video.speed`, `video.text`, `video.thumbnail`, `video.transform`, `video.trim`, `video.watermark` |
 | `voice` | 12 | `voice.clone`, `voice.dialogue`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
 <!-- END GENERATED: categories -->
 

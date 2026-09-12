@@ -1,18 +1,18 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 134 plugins, 17 categories.
+> 139 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
-- [analyze](#analyze) (12)
+- [analyze](#analyze) (13)
 - [audio](#audio) (16)
 - [brand](#brand) (3)
 - [browser](#browser) (2)
-- [distribute](#distribute) (4)
-- [edit](#edit) (5)
+- [distribute](#distribute) (5)
+- [edit](#edit) (6)
 - [effects](#effects) (6)
-- [export](#export) (6)
+- [export](#export) (7)
 - [fx](#fx) (7)
 - [image](#image) (18)
 - [music](#music) (2)
@@ -20,7 +20,7 @@
 - [render](#render) (6)
 - [subtitle](#subtitle) (5)
 - [transitions](#transitions) (1)
-- [video](#video) (26)
+- [video](#video) (27)
 - [voice](#voice) (12)
 
 ## analyze
@@ -30,6 +30,7 @@
 | `analyze.continuity` | Measure brightness, contrast and colour across a sequence of shots and flag the cuts that will read as a jump. | data |
 | `analyze.scene_audit` | Per-scene probe + cross-check + final assembly QC. Returns a JSON audit report. | json |
 | `analyze.scopes` | Render a waveform, vectorscope and histogram for a frame, plus numeric signal statistics. | image, data |
+| `analyze.search` | Find a phrase across one or more transcripts and return the timecodes where it occurs. | data |
 | `analyze.video` | QC report: black frames, freeze frames, audio peaks, codec/duration/aspect/fps. | json |
 | `audio.onset` | Measures onsets-per-minute from an audio file, classifies the track as calm/mid/energetic, returns the matching target BPM and top-50 onset timestamps. | json |
 | `image.aesthetic` | Returns a 0-5 score: +2 resolution >= 1280x720, +1 >= 1920x1080, +1 sane aspect ratio, +1 file size > 200KB, +1 valid bit-depth. No LLM. | json |
@@ -83,6 +84,7 @@
 | `delivery.archive` | Reads the current published version under <deliveriesRoot>/<projectId>/, moves that version folder into <archiveRoot>/<projectId>/<version>-<timestamp>. | video |
 | `delivery.publish` | Copies a file to <outDir>/<projectId>/<version>/<basename>, writes a MANIFEST.json (sha1, size, mtime), and updates <projectId>/LATEST to point to the current version. | video |
 | `delivery.revision` | Bumps the patch component of the project's current version (v1.0 -> v1.1) and publishes the new file under that version tag. Reads LATEST marker to find the current version. | video |
+| `delivery.stems` | Package dialogue, music and effects as separate normalised stems, plus a full mix and a manifest. | audio, data |
 | `export.derivative` | One input, many outputs: 9:16, 16:9, 1:1, plus thumbnail PNG. | video |
 
 ## edit
@@ -91,6 +93,7 @@
 |---|---|---|
 | `edit.beat_cut` | Convert an audio.beat grid into an explicit clip list for render.timeline, so every cut lands on an onset (or beat). | data |
 | `edit.conform` | Relink a timeline cut against proxies back to the original media, verifying the swap is valid. | data |
+| `edit.match` | Measure each shot against a reference and apply a luminance, contrast, saturation and gamma correction towards it. | video, data |
 | `edit.ops` | Apply a batch of timeline operations (delete/insert/reorder/update/retime) to a JSON timeline spec. Returns the new timeline + a log of applied ops. | json |
 | `edit.transcript_cut` | Turn a transcript into a clip list: drop filler words, keep only matching lines, and tighten silences. | data |
 | `video.scene_split` | Split a long clip into N sub-clips: evenly (mode=equal, count=N) or at explicit comma-separated timestamp marks (mode=marks). Uses lossless trim+concat. | video |
@@ -114,6 +117,7 @@
 | `browser.pdf` | Print a URL or local HTML file to PDF using headless Chromium. | data |
 | `export.contact_sheet` | Build a grid of frames from a video (contact sheet) for visual review. | image |
 | `export.gif` | Convert a video segment into an animated GIF. | image |
+| `export.platform` | Encode to a named platform spec (resolution, fps, codec, loudness) — YouTube, Shorts, Reels, TikTok, broadcast, web. | video |
 | `export.probe` | Report duration, size, codecs, streams, and run a black-frame check. | data |
 | `export.reframe` | Fit a video into 9:16 / 16:9 / 1:1 / 4:5 by padding or cropping. | video |
 
@@ -216,6 +220,7 @@
 | `video.proxy` | Build low-resolution editing proxies for a file or a folder, plus a manifest that edit.conform uses to relink the originals. | video, data |
 | `video.remove_silence` | Cut silent passages out of a video (also removes the matching picture). | video |
 | `video.resize` | Scale a video to an explicit size or to a target short-edge height. | video |
+| `video.retime` | Slow down or speed up with motion-compensated interpolation, so slow motion is smooth instead of stuttery. | video |
 | `video.reverse` | Play a clip backwards (re-encodes, no audio). | video |
 | `video.rotate` | Rotate a video by 90 / 180 / 270 degrees, or an arbitrary angle. | video |
 | `video.speed` | Speed up or slow down a video (and optionally its audio). | video |

@@ -304,10 +304,11 @@ Superseding the earlier list, now ordered against the role table above.
 |---|---|---|---|
 | ~~1~~ | ~~**Per-clip properties in `render.timeline`** (`transform`, `volume`, `speed`)~~ | Editor | **Done.** Turns a concat into an edit. |
 | ~~2~~ | ~~**`video.proxy` + `edit.conform`**~~ | Assistant editor | **Done.** The offline/online split now exists. |
-| 3 | **`analyze.search`** — search transcripts and footage by meaning | Editor | The second half of transcript-driven editing: find the shot, not just cut it. |
-| 4 | **`delivery.stems`** | Sound editor | Broadcast/distribution requirement. Cheap: the pipeline already knows which file is voice and which is music. |
-| 5 | **`export.platform`** — encode presets per platform + broadcast legalisation | Delivery | Table stakes; `export.derivative` only does aspect ratios. |
-| 6 | **`video.retime`** — optical-flow interpolation | Editor | Real slow motion, and it retires the frame-duplication limitation. |
+| ~~3~~ | ~~**`analyze.search`**~~ | Editor | **Done** — text and regex search across transcripts with timecodes. Semantic search still open. |
+| ~~9~~ | ~~**`edit.match`**~~ | Colourist | **Done** — first-order luminance/contrast/saturation matching. |
+| ~~4~~ | ~~**`delivery.stems`**~~ | Sound editor | **Done.** |
+| ~~5~~ | ~~**`export.platform`**~~ | Delivery | **Done.** |
+| ~~6~~ | ~~**`video.retime`**~~ | Editor | **Done** — `minterpolate`, not optical flow, but real interpolation. |
 | 7 | **`video.multicam`** — sync angles, switch between them | Editor | The one editor feature with no partial coverage at all. |
 | 8 | **`video.mask` + `analyze.track`** | VFX | Masks are the last big creative unlock; tracking makes them usable on moving shots. |
 | 9 | **`edit.match`** — shot matching | Colourist | The most visible difference between amateur and professional cutting. |
