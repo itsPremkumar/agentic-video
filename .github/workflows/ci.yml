@@ -36,7 +36,7 @@ jobs:
           cache: npm
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
         # Python is only needed for plugin *discovery* (`npm test` walks every
@@ -62,7 +62,7 @@ jobs:
           node-version: "22"
           cache: npm
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
