@@ -133,3 +133,38 @@ npm run forge steps steps.json
 
 The runner **stops at the first failure** and reports which steps were not executed. It never
 substitutes or retries.
+
+---
+
+## 8. Beat-synced cut
+
+Cuts land exactly on the music. `audio.beat` detects the grid, `edit.beat_cut` turns it into a
+clip list, `render.timeline` renders it. Nothing here is guessed — the plan is a JSON file you can
+read before you spend time rendering.
+
+```bash
+npm run forge -- run music.generate --input key=E --input bpm=120 --input duration=16 --input mood=tense
+npm run forge -- run audio.beat     --input file=bed.wav --input threshold=-22 --input out=beats.json
+
+# files cycle if there are fewer of them than segments
+cat > cut.json <<'JSON'
+{ "files": ["a.jpg", "b.jpg", "c.jpg"], "beats": "beats.json", "grid": "onsets" }
+JSON
+npm run forge -- run edit.beat_cut --json cut.json --input out=clips.json
+
+# inspect clips.json before rendering — clipCount and totalSeconds tell you what you will get
+npm run forge -- run render.timeline --json clips.json
+```
+
+Useful inputs on `edit.beat_cut`:
+
+| Input | Why |
+|---|---|
+| `grid` | `onsets` (default, punchier) or `beats` (metronomic) |
+| `minClipSeconds` | default `0.25` — absorbs slivers so you get no single-frame flashes |
+| `maxClipSeconds` | splits a long segment across more files instead of holding one shot |
+| `start` / `end` | cut a window out of the track |
+
+The output has **no transitions** — beat cuts are hard cuts. If you want crossfades, add
+`transition` to individual clips yourself and remember each one shortens the result by its
+duration.

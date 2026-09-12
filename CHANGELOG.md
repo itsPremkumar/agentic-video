@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`edit.beat_cut`** — `audio.beat` detected a beat grid but nothing consumed it, so cutting on
+  the beat meant re-deriving the arithmetic by hand. This turns the grid into an explicit clip
+  list for `render.timeline`, so every cut lands on an onset (or beat). It decides nothing: same
+  grid + same files = same plan. `minClipSeconds` (default 0.25) absorbs slivers that would
+  otherwise render as single-frame flashes; `maxClipSeconds` splits a long segment across more
+  files. 125 plugins now.
 - **An agent skill** at `skills/agentic-video/` — a single top-level entry point for driving the
   whole toolkit: an 8-stage master workflow, a "kitchen sink" chain that uses every major
   capability, five runnable `forge steps` files, and four prompt templates (plan, recover,

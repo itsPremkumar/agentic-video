@@ -1,6 +1,6 @@
 # Agentic Video
 
-A **passive** video toolkit. It has 124 plugins and **no orchestrator** — it never decides,
+A **passive** video toolkit. It has 125 plugins and **no orchestrator** — it never decides,
   
 retries or substitutes. You are the intelligence. It is the hands.
 
@@ -28,7 +28,7 @@ toolkit exists to prevent.
 
 ```bash
 cd <path-to>/agentic-video
-npm run forge list              # must print 124 plugins
+npm run forge list              # must print 125 plugins
 ffmpeg -version                 # required for almost everything
 cp .env.example .env            # add PEXELS_API_KEY — see references/providers.md
 npx playwright install chromium # only if you use browser.* plugins
@@ -53,6 +53,7 @@ next stage. Skip stages you do not need; do not reorder them.
 | 4 | Motion graphics          | `motion.remotion_template`, `motion.remotion`, `motion.canvas`        |
 | 5 | Still → motion           | `motion.effect`, `video.from_images`, `render.slideshow`              |
 | 6 | Voice, music, subtitles  | `voice.tts`, `music.generate`, `subtitle.create`, `subtitle.burn`     |
+| 6b | Beat-sync (optional)     | `audio.beat` → `edit.beat_cut` → hard cuts on the onsets              |
 | 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
 | 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`                     |
 
@@ -142,6 +143,12 @@ npm run forge -- run video.from_images --json from-images.json   # {files:[...]}
 npm run forge -- run voice.tts   --input text="..." --input voice=en-US-AriaNeural
 npm run forge -- run music.generate --input key=A --input bpm=90 --input duration=24 --input mood=hopeful
 npm run forge -- run subtitle.create --json subs.json            # cues must be an array
+
+# Beat-synced cutting: audio.beat writes a grid, edit.beat_cut turns it into a
+# clip list, render.timeline renders it. Cuts land exactly on the onsets.
+npm run forge -- run audio.beat     --input file=bed.wav --input out=beats.json
+npm run forge -- run edit.beat_cut  --json cut.json   # {files:[...], beats:"beats.json"}
+npm run forge -- run render.timeline --json clips.json
 npm run forge -- run subtitle.burn --input video=reel.mp4 --input subtitles=subs.srt
 ```
 
@@ -206,6 +213,7 @@ A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.js
 | A website as an image               | `browser.screenshot`                                     | —                                           |
 | A website as a video                | `browser.record_flow`                                    | —                                           |
 | Animated text / lower-third / chart | `motion.remotion_template`                               | `video.text`                                |
+| Cuts that land on the music         | `audio.beat` → `edit.beat_cut`                            | cutting by eye                              |
 | Bespoke motion graphics             | `motion.remotion` (your TSX)                             | —                                           |
 | Move a still                        | `motion.effect`                                          | `video.from_images` (that's for many)       |
 | Many stills → video                 | `video.from_images` / `render.slideshow`                 | —                                           |
@@ -298,7 +306,7 @@ Every one of these was hit by actually running the pipeline, not by reading the 
 
 ## References
 
-- [references/plugin-catalogue.md](references/plugin-catalogue.md) — all 124 plugins by category *(generated)*
+- [references/plugin-catalogue.md](references/plugin-catalogue.md) — all 125 plugins by category *(generated)*
 - [references/remotion-templates.md](references/remotion-templates.md) — all 20 templates + props *(generated)*
 - [references/providers.md](references/providers.md) — stock / AI / TTS sources and keys
 - [references/failure-codes.md](references/failure-codes.md) — every code and what to do

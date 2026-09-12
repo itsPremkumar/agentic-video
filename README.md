@@ -5,7 +5,7 @@
 [![CodeQL](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml/badge.svg)](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Node 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
-[![Plugins: 124](https://img.shields.io/badge/plugins-124-blue.svg)](plugins/INDEX.md)
+[![Plugins: 125](https://img.shields.io/badge/plugins-125-blue.svg)](plugins/INDEX.md)
 [![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
 
 A pure plugin-based toolkit for agentic video editing and creation. An external
@@ -71,7 +71,7 @@ cd agentic-video
 npm install
 cp .env.example .env                # add FAL_KEY / REPLICATE_API_TOKEN if you want AI plugins
 
-npm run forge list                   # list every plugin (124)
+npm run forge list                   # list every plugin (125)
 npm run forge describe image.resize  # show a plugin's inputs / outputs
 npm run forge run image.resize --input src=input.png --input width=1080 --input height=1920
 npm run forge steps examples/ocean-reel.json    # replay an explicit step list
@@ -111,7 +111,7 @@ full setup.
                 └── core/python.ts      Python plugin bridge
                 │
                 v
-        plugins/**  124 plugins, one file each
+        plugins/**  125 plugins, one file each
 ```
 
 Two rules make the whole thing predictable:
@@ -128,7 +128,7 @@ Two rules make the whole thing predictable:
 ```
 agentic-video/
 ├── core/            plugin contract: loader, registry, runner, media, artifacts
-├── plugins/         every capability (124) — see plugins/README.md
+├── plugins/         every capability (125) — see plugins/README.md
 │   ├── INDEX.md     generated catalogue: id → one-liner → engine → file
 │   └── _shared/     shared code, never registered as plugins
 ├── python/          Python bridge (run_plugin.py) + forge_py runtime
@@ -172,7 +172,7 @@ the code slug is `agenticvideo`.
 | `brand` | 3 | `brand.kit`, `text.hook`, `text.seo` |
 | `browser` | 2 | `browser.act`, `browser.open` |
 | `distribute` | 4 | `delivery.archive`, `delivery.publish`, `delivery.revision`, `export.derivative` |
-| `edit` | 2 | `edit.ops`, `video.scene_split` |
+| `edit` | 3 | `edit.beat_cut`, `edit.ops`, `video.scene_split` |
 | `effects` | 6 | `effects.color_grade`, `effects.look`, `effects.style`, `effects.video`, `image.remove_bg`, `video.denoise` |
 | `export` | 6 | `browser.extract`, `browser.pdf`, `export.contact_sheet`, `export.gif`, `export.probe`, `export.reframe` |
 | `fx` | 7 | `effects.genre`, `fx.chroma_key`, `fx.compare`, `fx.speed_ramp`, `fx.stabilize`, `fx.transition_effect`, `fx.vintage` |

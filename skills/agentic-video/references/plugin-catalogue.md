@@ -1,7 +1,7 @@
 # Plugin catalogue
 
 > **Generated** by `npm run gen:skill` from the live registry. Do not edit by hand.
-> 124 plugins, 17 categories.
+> 125 plugins, 17 categories.
 >
 > Run `forge describe <id>` for exact inputs, defaults and enum values before you use one.
 
@@ -10,7 +10,7 @@
 - [brand](#brand) (3)
 - [browser](#browser) (2)
 - [distribute](#distribute) (4)
-- [edit](#edit) (2)
+- [edit](#edit) (3)
 - [effects](#effects) (6)
 - [export](#export) (6)
 - [fx](#fx) (7)
@@ -85,6 +85,7 @@
 
 | Plugin | What it does | Outputs |
 |---|---|---|
+| `edit.beat_cut` | Convert an audio.beat grid into an explicit clip list for render.timeline, so every cut lands on an onset (or beat). | [object Object] |
 | `edit.ops` | Apply a batch of timeline operations (delete/insert/reorder/update/retime) to a JSON timeline spec. Returns the new timeline + a log of applied ops. | [object Object] |
 | `video.scene_split` | Split a long clip into N sub-clips: evenly (mode=equal, count=N) or at explicit comma-separated timestamp marks (mode=marks). Uses lossless trim+concat. | [object Object] |
 
