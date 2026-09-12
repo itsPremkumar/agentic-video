@@ -98,15 +98,24 @@ honestly.
 | Cinematic colour grade           | `effects.look` (11 looks) / `fx.vintage` (14 looks) / `effects.color_grade` (5 treatments) / `effects.genre` (14 genre packs) | ffmpeg-native |
 | Apply a stylised transition      | `fx.transition_effect` (glitch / lightLeak / whipPan / flash / rgbSplit / zoomBlur)   | segment-split windowing             |
 | Side-by-side / N-up compare      | `fx.compare` (hstack+vstack grid)                                                     | deterministic                       |
-| Voiceover                        | `voice.tts` (Edge-TTS)                                                                | no key                              |
-| Start/stop the Voicebox backend  | `voice.voicebox_server` (start / stop / restart / status)                             | vendored at `vendor/voicebox`       |
-| Check Voicebox GPU + health      | `voice.voicebox_health`                                                               | fast probe                          |
-| Manage engines / free VRAM       | `voice.voicebox_models` (status / load / unload / cacheDir)                           | unload before switching engines     |
-| Re-use a past generation         | `voice.voicebox_history` (list / stats / get / audio)                                 | avoids re-spending GPU time         |
-| Clone a voice (realistic)        | `voice.voicebox_clone`                                                                | needs the local Voicebox server     |
-| Speak in a cloned voice          | `voice.voicebox_speak`                                                                | most realistic; needs Voicebox      |
-| Clone a voice (offline)          | `voice.clone` (Coqui XTTS-v2)                                                         | needs `pip install TTS` + model     |
-| Transcribe                       | `voice.stt` (faster-whisper)                                                          | needs `pip install faster-whisper`  |
+| Voiceover (Edge-TTS, free)       | `voice.tts` / `voice.edge_tts`                                                        | no key, cloud                       |
+| Multi-speaker dialogue           | `voice.dialogue` / `voice.edge_tts_dialogue`                                          | one voice per speaker               |
+| List Edge-TTS voices             | `voice.list_voices` / `voice.edge_tts_voices`                                         | filter by locale                    |
+| Transcribe                       | `voice.stt` / `voice.whisper_stt` (faster-whisper)                                    | needs `pip install faster-whisper`  |
+| Speaker diarization              | `voice.diarize` / `voice.whisper_diarize`                                             | needs `pip install pyannote.audio`  |
+| Clone voice (offline Coqui)      | `voice.clone` / `voice.coqui_clone` (XTTS-v2)                                         | needs `pip install TTS`             |
+| Start/stop Voicebox server       | `voice.voicebox_server`                                                               | vendored at `vendor/voicebox`       |
+| Check Voicebox health            | `voice.voicebox_health`                                                               | fast probe                          |
+| Manage Voicebox engines          | `voice.voicebox_models` (load/unload)                                                 | free VRAM before switching          |
+| Voicebox history                 | `voice.voicebox_history`                                                              | re-download past generations        |
+| Clone voice (Voicebox)           | `voice.voicebox_clone`                                                                | needs Voicebox server               |
+| Speak: Voicebox Kokoro           | `voice.voicebox_kokoro`                                                               | ~0.8 GB VRAM, fastest               |
+| Speak: Voicebox Chatterbox       | `voice.voicebox_chatterbox`                                                           | ~3.2 GB VRAM, multilingual clone    |
+| Speak: Voicebox Chatterbox Turbo | `voice.voicebox_chatterbox_turbo`                                                     | ~3.8 GB VRAM, fast clone            |
+| Speak: Voicebox Qwen             | `voice.voicebox_qwen`                                                                 | ~3.6 GB VRAM, quality narrator      |
+| Speak: Voicebox Qwen Custom      | `voice.voicebox_qwen_custom`                                                          | ~3.6 GB VRAM, custom clone          |
+| Speak: Voicebox LuxTTS           | `voice.voicebox_luxtts`                                                               | premium quality                     |
+| Generic Voicebox speak           | `voice.voicebox_speak` (any engine)                                                   | legacy; engine-specific preferred   |
 | Transcribe + speaker labels      | `voice.diarize` (faster-whisper + pyannote.audio)                                     | needs `pip install pyannote.audio`  |
 | Remove filler words from audio   | `audio.remove_fillers` (um/uh/like/etc. + gap tighten)                                | needs transcript from voice.stt     |
 | Separate stems (vocals/music)    | `audio.separate` (Demucs)                                                             | needs `pip install demucs`          |

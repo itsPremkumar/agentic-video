@@ -58,9 +58,9 @@ next stage. Skip stages you do not need; do not reorder them.
 | 4 | Motion graphics          | `motion.remotion_template`, `motion.remotion`, `motion.canvas`        |
 | 5 | Still → motion           | `motion.effect`, `video.from_images`, `render.slideshow`              |
 | 5b | Animate a clip           | `video.transform` (keyframed scale / position / rotation)             |
-| 6 | Voice, music, subtitles  | `voice.tts`, `music.generate`, `subtitle.create`, `subtitle.burn`     |
-| 6a | Multi-speaker dialogue   | `voice.dialogue` (one voice per speaker, sequenced)                    |
-| 6c | Cut by transcript        | `voice.stt` → `edit.transcript_cut` (drop fillers, keep by keyword)    |
+| 6 | Voice, music, subtitles  | `voice.edge_tts` / `voice.voicebox_kokoro` / `voice.voicebox_qwen`, `music.generate`, `subtitle.create`, `subtitle.burn` |
+| 6a | Multi-speaker dialogue   | `voice.dialogue` / `voice.edge_tts_dialogue` (one voice per speaker)   |
+| 6c | Cut by transcript        | `voice.whisper_stt` → `edit.transcript_cut` (drop fillers, keep by keyword) |
 | 6b | Beat-sync (optional)     | `audio.beat` → `edit.beat_cut` → hard cuts on the onsets              |
 | 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
 | 8 | Technical verify         | `export.probe`, `qc.gate`, `export.contact_sheet`, `analyze.scopes`, `analyze.continuity` |
