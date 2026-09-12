@@ -7,7 +7,12 @@
     { "plugin": "motion.remotion_template", "input": { "template": "stat-counter", "label": "Videos rendered", "value": 128, "suffix": "k", "durationInFrames": 75, "width": 1080, "height": 1080, "out": "02-stat.mp4" } },
     { "plugin": "motion.remotion_template", "input": { "template": "list-reveal", "title": "What you get", "items": ["124 plugins", "No orchestrator", "Explicit failures", "Four transports"], "durationInFrames": 90, "width": 1080, "height": 1080, "out": "03-list.mp4" } },
     { "plugin": "motion.remotion_template", "input": { "template": "end-cta", "headline": "Thanks for watching", "subline": "Build something", "cta": "Subscribe", "durationInFrames": 75, "width": 1080, "height": 1080, "out": "04-cta.mp4" } },
-    { "plugin": "transitions.xfade", "input": { "sources": ["REPLACE-01-title.mp4", "REPLACE-02-stat.mp4", "REPLACE-03-list.mp4", "REPLACE-04-cta.mp4"], "transition": "fade", "duration": 0.5, "out": "showcase.mp4" } },
-    { "plugin": "export.probe", "input": { "file": "REPLACE-showcase.mp4" } }
+    { "_comment": "transitions.xfade joins exactly TWO clips; for N use render.timeline and put the transition on each clip after the first.", "plugin": "render.timeline", "input": { "clips": [
+      { "src": "REPLACE-01-title.mp4" },
+      { "src": "REPLACE-02-stat.mp4", "transition": "dissolve", "transitionDuration": 0.5 },
+      { "src": "REPLACE-03-list.mp4", "transition": "dissolve", "transitionDuration": 0.5 },
+      { "src": "REPLACE-04-cta.mp4", "transition": "dissolve", "transitionDuration": 0.5 }
+    ], "width": 1080, "height": 1080, "out": "showcase.mp4" } },
+    { "plugin": "export.probe", "input": { "src": "REPLACE-showcase.mp4" } }
   ]
 }

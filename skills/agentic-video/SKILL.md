@@ -1,11 +1,7 @@
----
-name: agentic-video
-description: Build and edit videos with the Agentic Video plugin toolkit (124 plugins, CLI/HTTP/MCP). Use when asked to create, edit, render or QC a video — especially combining downloaded stock media, HTML/SVG-generated graphics, Remotion motion graphics, website captures, narration, music and subtitles into a finished MP4.
----
-
 # Agentic Video
 
 A **passive** video toolkit. It has 124 plugins and **no orchestrator** — it never decides,
+  
 retries or substitutes. You are the intelligence. It is the hands.
 
 That is the whole deal. Everything below follows from it.
@@ -15,6 +11,7 @@ That is the whole deal. Everything below follows from it.
 ## The three rules
 
 1. **Describe before you promise.** `forge describe <id>` prints exact inputs, defaults and
+     
    enum values. Guessing an input name is the single most common failure.
 2. **One plugin at a time, read the result, pass the path forward.** Never batch and hope.
 3. **A failure is information, not a setback.** Read `code` and `retryable`:
@@ -22,6 +19,7 @@ That is the whole deal. Everything below follows from it.
    - `retryable: false` → re-running cannot help; fix the environment (key, binary, file).
 
 **Never substitute a different plugin to make a failure go away.** That is the one thing this
+  
 toolkit exists to prevent.
 
 ---
@@ -43,28 +41,30 @@ If `forge list` fails, do not proceed — fix the install.
 ## The master workflow
 
 Eight stages. Each is one or more plugins. Run them in order, passing each output path to the
+  
 next stage. Skip stages you do not need; do not reorder them.
 
-| # | Stage | Plugins |
-|---|---|---|
-| 0 | Plan | `forge list`, `forge describe` |
-| 1 | Acquire stock media | `image.download`, `video.download`, `music.download` |
-| 2 | Create media from markup | `image.create` (SVG / HTML+CSS), `image.canvas` |
-| 3 | Capture the web | `browser.screenshot`, `browser.scroll_capture`, `browser.record_flow` |
-| 4 | Motion graphics | `motion.remotion_template`, `motion.remotion`, `motion.canvas` |
-| 5 | Still → motion | `motion.effect`, `video.from_images`, `render.slideshow` |
-| 6 | Voice, music, subtitles | `voice.tts`, `music.generate`, `subtitle.create`, `subtitle.burn` |
-| 7 | Assemble | `render.timeline`, `video.merge`, `transitions.xfade` |
-| 8 | Verify | `export.probe`, `qc.gate`, `export.contact_sheet` |
+| # | Stage                    | Plugins                                                               |
+| - | ------------------------ | --------------------------------------------------------------------- |
+| 0 | Plan                     | `forge list`, `forge describe`                                        |
+| 1 | Acquire stock media      | `image.download`, `video.download`, `music.download`                  |
+| 2 | Create media from markup | `image.create` (SVG / HTML+CSS), `image.canvas`                       |
+| 3 | Capture the web          | `browser.screenshot`, `browser.scroll_capture`, `browser.record_flow` |
+| 4 | Motion graphics          | `motion.remotion_template`, `motion.remotion`, `motion.canvas`        |
+| 5 | Still → motion           | `motion.effect`, `video.from_images`, `render.slideshow`              |
+| 6 | Voice, music, subtitles  | `voice.tts`, `music.generate`, `subtitle.create`, `subtitle.burn`     |
+| 7 | Assemble                 | `render.timeline`, `video.merge`, `transitions.xfade`                 |
+| 8 | Verify                   | `export.probe`, `qc.gate`, `export.contact_sheet`                     |
 
 ### Stage 1 — stock media
 
 `provider` is **required** and is never substituted. No key → `MISSING_API_KEY`, not a silent
+  
 fallback to another source.
 
 ```bash
 npm run forge -- run image.download --input provider=pexels --input query="ocean waves" \
-  --input count=6 --input orientation=landscape --input out=shots.json
+  --input count=6 --input prefix=sea
 npm run forge -- run video.download --input provider=pexels --input query="aerial coast" \
   --input count=3 --input out=clips.json
 ```
@@ -76,6 +76,7 @@ Keyless sources that always work: `openverse` (images), `wikimedia` (images + vi
 ### Stage 2 — media from markup (no stock, no AI)
 
 This is the one people miss. You can **author** visuals as HTML/CSS or SVG and rasterise them in
+  
 a real browser — full CSS: gradients, filters, blend modes, web fonts, grid/flex, clip-path.
 
 ```bash
@@ -99,11 +100,13 @@ npm run forge -- run browser.record_flow --input url=https://example.com \
 ```
 
 `browser.record_flow` launches **headed** on purpose — Chrome Headless Shell cannot record video.
+  
 On a headless server, run it under `xvfb-run`.
 
 ### Stage 4 — Remotion motion graphics
 
 **20 ready-made compositions**, from lower-thirds to product cards. Real React + spring
+  
 animations, not ffmpeg filters.
 
 ```bash
@@ -113,9 +116,11 @@ npm run forge -- run motion.remotion_template --input template=stat-counter \
 ```
 
 See [references/remotion-templates.md](references/remotion-templates.md) for all 20 and their
+  
 props. For something bespoke, `motion.remotion` takes your own TSX.
 
 Rendering is slow the first time (~25 s cold bundle, then ~20 s each). That is normal, not a
+  
 failure — do not switch to a different plugin to "save time".
 
 ### Stage 5 — stills into motion
@@ -135,7 +140,7 @@ npm run forge -- run video.from_images --json from-images.json   # {files:[...]}
 
 ```bash
 npm run forge -- run voice.tts   --input text="..." --input voice=en-US-AriaNeural
-npm run forge -- run music.generate --input key=A --input bpm=90 --input bars=16
+npm run forge -- run music.generate --input key=A --input bpm=90 --input duration=24 --input mood=hopeful
 npm run forge -- run subtitle.create --json subs.json            # cues must be an array
 npm run forge -- run subtitle.burn --input video=reel.mp4 --input subtitles=subs.srt
 ```
@@ -152,19 +157,22 @@ npm run forge -- run video.merge --json merge.json          # {sources:[...]} �
 ### Stage 8 — verify, always
 
 ```bash
-npm run forge -- run export.probe --input file=final.mp4
+npm run forge -- run export.probe --input src=final.mp4
 npm run forge -- run qc.gate --input file=final.mp4
 npm run forge -- run export.contact_sheet --input file=final.mp4 --input cols=4 --input rows=4
 ```
 
 `export.probe` returns **nested** `{video:{codec,width,height,fps}, audio:{codec}}` — not a
+  
 `streams` array.
 
 ---
 
+
 ## The kitchen-sink recipe
 
 One video that uses every major capability in order. This is the reference workflow — adapt it
+  
 rather than starting from scratch.
 
 ```
@@ -188,22 +196,22 @@ A runnable version is in [workflows/kitchen-sink.json](workflows/kitchen-sink.js
 
 ## Choosing a plugin
 
-| I need… | Use | Not |
-|---|---|---|
-| A photo | `image.download` | `image.generate` (costs money, needs a key) |
-| Footage | `video.download` | — |
-| A graphic I can describe in HTML | `image.create` | — |
-| Procedural / data-driven art | `image.canvas` | `image.create` |
-| A picture from a prompt | `image.generate` | — |
-| A website as an image | `browser.screenshot` | — |
-| A website as a video | `browser.record_flow` | — |
-| Animated text / lower-third / chart | `motion.remotion_template` | `video.text` |
-| Bespoke motion graphics | `motion.remotion` (your TSX) | — |
-| Move a still | `motion.effect` | `video.from_images` (that's for many) |
-| Many stills → video | `video.from_images` / `render.slideshow` | — |
-| Join clips | `video.merge` (concat) / `render.timeline` (transitions) | — |
-| Cut a clip | `video.trim` | — |
-| Check a file | `export.probe` | — |
+| I need…                             | Use                                                      | Not                                         |
+| ----------------------------------- | -------------------------------------------------------- | ------------------------------------------- |
+| A photo                             | `image.download`                                         | `image.generate` (costs money, needs a key) |
+| Footage                             | `video.download`                                         | —                                           |
+| A graphic I can describe in HTML    | `image.create`                                           | —                                           |
+| Procedural / data-driven art        | `image.canvas`                                           | `image.create`                              |
+| A picture from a prompt             | `image.generate`                                         | —                                           |
+| A website as an image               | `browser.screenshot`                                     | —                                           |
+| A website as a video                | `browser.record_flow`                                    | —                                           |
+| Animated text / lower-third / chart | `motion.remotion_template`                               | `video.text`                                |
+| Bespoke motion graphics             | `motion.remotion` (your TSX)                             | —                                           |
+| Move a still                        | `motion.effect`                                          | `video.from_images` (that's for many)       |
+| Many stills → video                 | `video.from_images` / `render.slideshow`                 | —                                           |
+| Join clips                          | `video.merge` (concat) / `render.timeline` (transitions) | —                                           |
+| Cut a clip                          | `video.trim`                                             | —                                           |
+| Check a file                        | `export.probe`                                           | —                                           |
 
 Full list: [references/plugin-catalogue.md](references/plugin-catalogue.md).
 
@@ -213,33 +221,76 @@ Full list: [references/plugin-catalogue.md](references/plugin-catalogue.md).
 
 Every failure returns `{code, message, reason, input, detail, retryable, hint}`.
 
-| Code | Means | Do this |
-|---|---|---|
-| `INVALID_INPUT` | your input is wrong | read `hint`, fix, re-run the same step |
-| `MISSING_API_KEY` | provider key absent | add to `.env`, re-run |
-| `MISSING_BINARY` | ffmpeg/ffprobe not on PATH | install it, re-run |
-| `MISSING_DEPENDENCY` | python/Chromium missing | install, re-run |
-| `CLIP_UNREADABLE` | source has no decodable stream | replace that file |
-| `NO_RESULTS` | stock query found nothing | reword the query or change provider |
-| `VOICEBOX_UNREACHABLE` | local TTS not running | run `voice.voicebox_server --input action=start` |
+| Code                   | Means                          | Do this                                          |
+| ---------------------- | ------------------------------ | ------------------------------------------------ |
+| `INVALID_INPUT`        | your input is wrong            | read `hint`, fix, re-run the same step           |
+| `MISSING_API_KEY`      | provider key absent            | add to `.env`, re-run                            |
+| `MISSING_BINARY`       | ffmpeg/ffprobe not on PATH     | install it, re-run                               |
+| `MISSING_DEPENDENCY`   | python/Chromium missing        | install, re-run                                  |
+| `CLIP_UNREADABLE`      | source has no decodable stream | replace that file                                |
+| `NO_RESULTS`           | stock query found nothing      | reword the query or change provider              |
+| `VOICEBOX_UNREACHABLE` | local TTS not running          | run `voice.voicebox_server --input action=start` |
 
 When `INVALID_INPUT` comes back, the `hint` usually tells you to run
+  
 `forge describe <id>` — **do it**, it prints the accepted values.
 
 More: [references/failure-codes.md](references/failure-codes.md).
 
 ---
 
+
 ## Gotchas that cost real time
+
+Every one of these was hit by actually running the pipeline, not by reading the code.
+
+### Input naming is inconsistent — always `forge describe` first
+
+- **`export.probe` takes `src`. `qc.gate` takes `file`.** Same idea, different name. These two are
+  the ones people get wrong most.
+- **`subtitle.burn` takes `src`**, not `video`.
+- **`image.download` / `video.download` take no `orientation`** — just `query`, `provider`,
+  `count`, `prefix`.
+- **`browser.scroll_capture` takes no `out`** — it writes into its artifact dir and returns the
+  stills.
+- **`image.grade` has no `look`** — it is `brightness` / `contrast` / `saturation` / `gamma`.
+  For named looks use `effects.look` or `effects.genre`.
+
+### Arguments and shapes
 
 - **Arrays and objects need `--json file.json`.** `--input k=v` mangles them, and the schema
   rejects a JSON *string* where it wants an array. Quotes in HTML/SVG break `--input` outright.
-- **`export.probe` is nested**, not a `streams` array.
-- **`music.generate` wants `key: "A"`**, not `"Am"`.
-- **Absolute output paths** — plugins resolve relative `out` inside their own artifact
-  directory. Pass a full path if you want to control where the file lands, and read the printed
-  path rather than assuming.
-- **Remotion's first render is slow** (~25 s bundling). Budget for it.
+- **Transitions are per-clip, not per-timeline.** `render.timeline` takes
+  `{src, transition, transitionDuration}` on each clip *after* the first; there is no top-level
+  `transition`. And `transitions.xfade` joins exactly **two** clips (`first` + `second`) — for N
+  clips use `render.timeline`.
+- **`music.generate` wants `key: "A"`**, not `"Am"`. Its length input is **`duration` in seconds**
+  (plus `mood: calm|hopeful|tense`) — there is no `bars` input.
+
+### Outputs
+
+- **`export.probe` is nested** — `{video:{codec,width,height,fps}, audio:{codec}}`, not a
+  `streams` array.
+- **Some plugins return non-media files alongside the media.** `browser.scroll_capture` emits a
+  `scroll-manifest.json` next to its PNGs. Hand the whole output list to the next plugin and it
+  will try to decode that JSON as an image. **Filter by extension** before passing a list forward.
+- **`export.contact_sheet` spans the whole video** — its frame interval is derived from the real
+  duration. If every tile looks identical, suspect the sheet, not the video.
+
+### Timing
+
+- **Transitions consume clip duration.** N clips totalling S seconds with transition T come out at
+  `S − (N−1)·T`. Six 2-second clips with 0.5 s transitions is 9.5 s, not 12 s.
+- **`video.from_images` uses a fixed ~0.5 s transition** with no input to change it. With 0.75 s
+  clips that eats most of every shot — a 6 s slideshow came out at 2.6 s. For fast cutting use
+  `transition: "none"` (hard cuts), or make each image longer.
+- **Remotion's first render is slow** (~25 s bundling, then ~20 s each). Budget for it.
+
+### Other
+
+- **Absolute output paths** — plugins resolve a relative `out` inside their own artifact
+  directory. Pass a full path to control where the file lands, and read the printed path rather
+  than assuming.
 - **`video.download` from Wikimedia** returns `.ogv` files. That is correct, not a bug.
 - **`browser.act` executes JavaScript you supply.** Only point it at URLs you trust.
 

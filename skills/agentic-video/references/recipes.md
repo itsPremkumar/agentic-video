@@ -38,15 +38,15 @@ Stock imagery, narration, music, captions, assembly.
 
 ```bash
 npm run forge -- run image.download --input provider=pexels --input query="ocean waves" \
-  --input count=6 --input orientation=landscape
+  --input count=6 --input prefix=sea
 npm run forge -- run voice.tts   --input text="Every year, twelve million tonnes..." \
   --input voice=en-US-AriaNeural
-npm run forge -- run music.generate --input key=A --input bpm=84 --input bars=16
+npm run forge -- run music.generate --input key=A --input bpm=84 --input duration=24 --input mood=tense
 npm run forge -- run audio.merge --json mix.json          # {voice, music, duck:true}
 npm run forge -- run video.from_images --json from-images.json
 npm run forge -- run subtitle.create --json subs.json     # cues is an ARRAY
 npm run forge -- run subtitle.burn --input video=reel.mp4 --input subtitles=subs.srt
-npm run forge -- run export.probe --input file=final.mp4
+npm run forge -- run export.probe --input src=final.mp4
 ```
 
 `music.generate` wants `key: "A"`, **not** `"Am"`.
@@ -104,7 +104,7 @@ image.download → video.download → image.create → browser.screenshot
 ## 6. Verify anything
 
 ```bash
-npm run forge -- run export.probe --input file=final.mp4
+npm run forge -- run export.probe --input src=final.mp4
 npm run forge -- run qc.gate --input file=final.mp4
 npm run forge -- run export.contact_sheet --input file=final.mp4 --input cols=4 --input rows=4
 ```

@@ -1,5 +1,5 @@
 import { definePlugin } from '../../core/define.ts';
-import { ffmpeg } from '../../core/media.ts';
+import { ffmpeg, durationOf } from '../../core/media.ts';
 import { S, requireFile, num } from '../_shared/common.ts';
 
 export default definePlugin({
@@ -21,7 +21,18 @@ export default definePlugin({
         const rows = num(input.rows, 3);
         const tile = num(input.width, 320);
         const dest = ctx.out(String(input.out ?? 'contact_sheet.png'));
-        const vf = `fps=1/${Math.max(1, Math.round(100 / (cols * rows))) / 100 || 1},scale=${tile}:-1,tile=${cols}x${rows}`;
+
+        // `fps=1/INTERVAL` emits one frame every INTERVAL seconds, so INTERVAL
+        // must be duration / tiles for the grid to span the whole video.
+        //
+        // This used to be `fps=1/${Math.round(100 / (cols*rows)) / 100}`, which
+        // computes a *rate* (0.06) and feeds it as an *interval* — i.e. 16.7 fps.
+        // tile= then grabbed the first 16 frames, all from the opening second,
+        // so every tile showed the same frame.
+        const tiles = Math.max(1, cols * rows);
+        const duration = await durationOf(src);
+        const interval = duration > 0 ? duration / tiles : 1;
+        const vf = `fps=1/${interval},scale=${tile}:-1,tile=${cols}x${rows}`;
         await ffmpeg(['-y', '-i', src, '-vf', vf, '-frames:v', '1', dest]);
         return { outputs: [{ path: dest, kind: 'image', meta: { cols, rows, tile } }] };
     },

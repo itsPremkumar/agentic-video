@@ -29,10 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **`export.contact_sheet` produced a grid of the same frame.** The filter was
+  `fps=1/${round(100 / (cols*rows)) / 100}` — that computes a *rate* (0.06) and feeds it where an
+  *interval* is expected, i.e. `fps=1/0.06` = 16.7 fps. `tile=` then took the first `cols*rows`
+  frames, all from the opening second, so a 13-second video produced 16 identical tiles. The
+  interval is now `duration / tiles`, so the sheet spans the whole timeline.
 - Two different failure codes for the same condition: `image.generate` and `video.generate`
   reported `API_KEY_MISSING` while the download plugins reported `MISSING_API_KEY`. Both are now
   `MISSING_API_KEY` — an agent can match on one code.
 - `AGENTS.md` still said "87 plugins"; it is 124.
+- Skill docs referenced inputs that do not exist (`music.generate` `bars`,
+  `image.download` `orientation`, `browser.scroll_capture` `out`, `subtitle.burn` `video`,
+  `export.probe` `file`, `render.timeline` top-level `transition`). All found by running the five
+  pipelines end to end and corrected.
 
 
 ### Changed

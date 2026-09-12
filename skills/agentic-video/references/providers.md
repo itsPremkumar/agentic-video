@@ -16,7 +16,7 @@ not a quiet swap to a worse source.
 
 ```bash
 npm run forge -- run image.download --input provider=pexels --input query="ocean waves" \
-  --input count=6 --input orientation=landscape
+  --input count=6 --input prefix=sea
 ```
 
 Returns a JSON file listing what it downloaded. Read it, then pass those paths downstream.

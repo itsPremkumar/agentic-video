@@ -5,7 +5,7 @@
   "steps": [
     {
       "plugin": "image.download",
-      "input": { "provider": "pexels", "query": "ocean waves aerial", "count": 4, "orientation": "landscape", "prefix": "sea" }
+      "input": { "provider": "pexels", "query": "ocean waves aerial", "count": 4, "prefix": "sea" }
     },
     {
       "plugin": "video.download",
@@ -46,7 +46,7 @@
     {
       "_comment": "key is a NOTE name (A), not a key signature (Am).",
       "plugin": "music.generate",
-      "input": { "key": "A", "bpm": 84, "bars": 16, "out": "bed.wav" }
+      "input": { "key": "A", "bpm": 84, "duration": 24, "mood": "tense", "out": "bed.wav" }
     },
     {
       "plugin": "audio.merge",
@@ -70,13 +70,11 @@
       "input": {
         "clips": [
           { "src": "REPLACE-card-move.mp4", "duration": 4 },
-          { "src": "REPLACE-stat.mp4" },
-          { "src": "REPLACE-clip_1.mp4", "duration": 5 },
-          { "src": "REPLACE-lower.mp4" },
-          { "src": "REPLACE-sea_1.jpg", "duration": 3 }
+          { "src": "REPLACE-stat.mp4", "transition": "fade", "transitionDuration": 0.5 },
+          { "src": "REPLACE-clip_1.mp4", "duration": 5, "transition": "fade", "transitionDuration": 0.5 },
+          { "src": "REPLACE-lower.mp4", "transition": "fade", "transitionDuration": 0.5 },
+          { "src": "REPLACE-sea_1.jpg", "duration": 3, "transition": "fade", "transitionDuration": 0.5 }
         ],
-        "transition": "fade",
-        "transitionDuration": 0.5,
         "audio": "REPLACE-mix.wav",
         "out": "kitchen-sink.mp4"
       }
@@ -87,7 +85,7 @@
     },
     {
       "plugin": "export.probe",
-      "input": { "file": "REPLACE-kitchen-sink-captioned.mp4" }
+      "input": { "src": "REPLACE-kitchen-sink-captioned.mp4" }
     },
     {
       "plugin": "qc.gate",
