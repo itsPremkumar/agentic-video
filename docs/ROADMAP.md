@@ -152,6 +152,20 @@ unexposed API, so it works today with Edge-TTS (no 2–3 GB setup) and with Voic
 the backend is running. Verified: 4 lines across 3 voices, correctly sequenced with 5 silence
 gaps rather than mixed together.
 
+### `render.timeline` per-clip properties
+
+Clips now carry `transform` (`scale`, `x`, `y`, `rotation`, `background`), `speed` and `volume`.
+Every normalised clip gets an audio track — silence when the source has none — so mixed stills and
+clips concatenate without the caller thinking about it.
+
+The audio chain mirrors the video chain: a cut concatenates, a transition `acrossfade`s by the
+same duration, so the two stay in sync through xfades. Verified: a two-clip fade timeline where
+the same source segment appears at `volume` 1.0 and 0.35 measures exactly **−9.1 dB** apart, and
+the final file's level matches the intermediate part to the decimal.
+
+Two bugs fixed on the way: `audioVolume` was declared but **never used**, and an external audio bed
+could be silently ignored because no `-map` was given.
+
 ### The next step, when Voicebox is installed
 
 `voice.voicebox_stories` and `voice.voicebox_effects` are thin wrappers over endpoints that
@@ -216,7 +230,7 @@ Superseding the earlier list, now ordered against the role table above.
 
 | # | Build | Role it serves | Why now |
 |---|---|---|---|
-| 1 | **Per-clip properties in `render.timeline`** (`transform`, `volume`, `speed`) | Editor | Still the highest-leverage change. Turns a concat into an edit. |
+| ~~1~~ | ~~**Per-clip properties in `render.timeline`** (`transform`, `volume`, `speed`)~~ | Editor | **Done.** Turns a concat into an edit. |
 | 2 | **`video.proxy` + `edit.conform`** | Assistant editor | Unblocks 4K and any real offline/online workflow. Straightforward. |
 | 3 | **`analyze.search`** — search transcripts and footage by meaning | Editor | The second half of transcript-driven editing: find the shot, not just cut it. |
 | 4 | **`delivery.stems`** | Sound editor | Broadcast/distribution requirement. Cheap: the pipeline already knows which file is voice and which is music. |

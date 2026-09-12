@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Per-clip properties in `render.timeline`** — clips now carry `transform` (`scale`, `x`, `y`,
+  `rotation`, `background`), `speed` and `volume`. This was the highest-leverage change in the
+  codebase: it turns the timeline from a concat into an edit. You can now hold one shot smaller
+  and off-centre over a background, retime a single clip, and sit one clip's audio under another
+  — all without pre-rendering intermediates.
+- **`analyze.scopes`** — waveform (IRE scale), vectorscope and RGB parade, plus numeric
+  `signalstats` and plain-language legal-range notes. Grading without measurement is guesswork.
+- **`edit.transcript_cut`** — cut picture by what was said: drop fillers, keep only matching
+  lines, tighten pauses. `voice.stt` produced per-segment timings and nothing consumed them.
 - **`video.transform`** — keyframed scale / position / rotation, composited onto a background.
   This was the biggest gap in the toolkit: everything could assemble and process clips, but
   nothing could *animate* one, which is what separates assembling assets from editing them.
@@ -57,6 +66,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   reported `API_KEY_MISSING` while the download plugins reported `MISSING_API_KEY`. Both are now
   `MISSING_API_KEY` — an agent can match on one code.
 - `AGENTS.md` still said "87 plugins"; it is 124.
+- **`render.timeline`'s `audioVolume` input was declared but never used.** The schema accepted it,
+  the docs described it, and it did nothing. It now applies to an external audio bed in both
+  render paths.
+- **An external audio bed could be silently ignored.** The non-transition path gave no `-map`, so
+  ffmpeg was free to keep the clips' own audio instead of the bed that was asked for.
 - Skill docs referenced inputs that do not exist (`music.generate` `bars`,
   `image.download` `orientation`, `browser.scroll_capture` `out`, `subtitle.burn` `video`,
   `export.probe` `file`, `render.timeline` top-level `transition`). All found by running the five

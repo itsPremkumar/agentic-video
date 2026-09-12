@@ -160,7 +160,14 @@ npm run forge -- run subtitle.burn --input video=reel.mp4 --input subtitles=subs
 ### Stage 7 — assemble
 
 ```bash
-npm run forge -- run render.timeline --json timeline.json   # {clips:[{src,duration,transition}]}
+# Per-clip properties: transform (static framing), speed, volume.
+npm run forge -- run render.timeline --json timeline.json
+#   { "clips": [
+#       { "src": "a.mp4", "duration": 4, "speed": 2 },
+#       { "src": "card.png", "duration": 3,
+#         "transform": { "scale": 0.55, "x": -180, "y": 60, "rotation": -4, "background": "#0b1020" } },
+#       { "src": "b.mp4", "start": 6, "duration": 3, "volume": 0.35 }
+#   ] }
 npm run forge -- run video.merge --json merge.json          # {sources:[...]} — plain concat
 ```
 
