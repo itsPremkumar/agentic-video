@@ -6,7 +6,7 @@
  */
 import { spawn } from 'node:child_process';
 import * as fs from 'node:fs';
-import { loadEnv, optionalEnv } from './env.ts';
+import { loadEnv, optionalEnv, firstEnv } from './env.ts';
 
 export interface RunResult {
     code: number;
@@ -65,7 +65,7 @@ export function resolveFfprobe(): string {
 
 export function resolvePython(): string {
     loadEnv();
-    return optionalEnv('VIDEOFORGE_PYTHON') ?? 'python';
+    return firstEnv('AGENTIC_VIDEO_PYTHON', 'VIDEOFORGE_PYTHON') ?? 'python';
 }
 
 export function run(

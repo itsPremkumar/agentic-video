@@ -1,0 +1,48 @@
+name: Feature request
+description: Anything that is not a specific plugin — transports, core, docs.
+title: "[feature] <short summary>"
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the situation, not just the solution you have in mind.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI (bin/forge.ts)
+        - HTTP API (api/server.ts)
+        - MCP server (mcp/server.ts)
+        - Core (core/*)
+        - Docs
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      description: >
+        Agentic Video deliberately has no LLM, orchestrator or planner inside
+        it — an external agent drives one plugin at a time.
+      options:
+        - label: This does not add autonomous decision-making to the project

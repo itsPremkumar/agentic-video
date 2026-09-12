@@ -1,7 +1,7 @@
-# Normalise line endings on check-in; check out with the platform's native
-# endings. Without this, every file committed on Windows produces an
-# "LF will be replaced by CRLF" warning and diffs pick up whole-file churn.
-* text=auto eol=crlf
+# Always LF, in the repo and in the working tree — matches .editorconfig.
+# (Files are already stored with LF in the index, so switching to this does not
+# produce a renormalisation diff; it only stops Windows checkouts diverging.)
+* text=auto eol=lf
 
 # Binary — never touch, never diff.
 *.png  binary

@@ -1,0 +1,46 @@
+name: Generated docs
+
+# plugins/INDEX.md and the README category table are generated from the plugin
+# tree by `npm run gen:index`. They must never be hand-edited — this job fails
+# if they drift.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  freshness:
+    name: plugins/INDEX.md is up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: npm ci
+
+      - run: npm run gen:index
+
+      - name: Fail if generated files changed
+        run: |
+          git diff --exit-code -- plugins/INDEX.md README.md || {
+            echo "::error::plugins/INDEX.md or the README category block is stale."
+            echo "Run 'npm run gen:index' and commit the result."
+            exit 1
+          }

@@ -1,9 +1,38 @@
 {
   "name": "agentic-video",
   "version": "1.0.0",
-  "private": true,
   "type": "module",
   "description": "Pure, modular, plugin-based video editing and creation toolkit. No orchestrator, no LLM, no autonomous pipeline — an external agent drives one plugin at a time.",
+  "license": "MIT",
+  "author": "itsPremkumar",
+  "keywords": [
+    "video",
+    "video-editing",
+    "video-generation",
+    "ffmpeg",
+    "plugins",
+    "agent",
+    "agentic",
+    "llm-tools",
+    "mcp",
+    "model-context-protocol",
+    "tts",
+    "subtitles",
+    "motion-graphics",
+    "playwright",
+    "remotion"
+  ],
+  "homepage": "https://github.com/itsPremkumar/agentic-video#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itsPremkumar/agentic-video.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itsPremkumar/agentic-video/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "forge": "tsx bin/forge.ts",
     "api": "tsx api/server.ts",

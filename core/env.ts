@@ -45,3 +45,18 @@ export function optionalEnv(key: string): string | undefined {
     const v = process.env[key];
     return v && v.length > 0 ? v : undefined;
 }
+
+/**
+ * First non-empty of `keys`, in order.
+ *
+ * Used so a renamed variable keeps working: pass the new name first and the
+ * legacy name second, and both are honoured without a deprecation warning the
+ * user has to act on.
+ */
+export function firstEnv(...keys: string[]): string | undefined {
+    for (const k of keys) {
+        const v = optionalEnv(k);
+        if (v) return v;
+    }
+    return undefined;
+}

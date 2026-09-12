@@ -1,0 +1,90 @@
+name: Plugin request
+description: A capability the toolkit is missing.
+title: "[plugin] <namespace>.<action> — <what it should do>"
+labels: ["plugin", "enhancement"]
+body:
+  - type: markdown
+    value: |
+      Agentic Video grows one plugin at a time. A good plugin request says what
+      the **inputs** and **outputs** should be — that is the contract the
+      driving agent reads, and it is the part worth getting right.
+
+  - type: input
+    id: proposed-id
+    attributes:
+      label: Proposed plugin id
+      description: snake_case `<namespace>.<action>` — this also decides its file path.
+      placeholder: video.stabilize
+    validations:
+      required: true
+
+  - type: input
+    id: namespace
+    attributes:
+      label: Namespace
+      description: >
+        e.g. `image`, `video`, `audio`, `voice`, `subtitle`, `effects`,
+        `browser`, `export`. Reuse an existing one unless it genuinely does not
+        fit.
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What should it do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Inputs
+      description: Name, type, whether required, and a one-line description for each.
+      render: yaml
+      placeholder: |
+        src:      string, required — source video
+        strength: number, default 5
+        out:      string — output file name
+    validations:
+      required: true
+
+  - type: textarea
+    id: outputs
+    attributes:
+      label: Outputs
+      description: What artifacts does it return, and of what kind?
+      placeholder: "one video artifact (h264/aac mp4)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: engine
+    attributes:
+      label: Which engine should implement it?
+      options:
+        - TypeScript (ffmpeg / sharp / canvas)
+        - TypeScript (Playwright / browser)
+        - Python
+        - Not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: failure-modes
+    attributes:
+      label: How should it fail?
+      description: >
+        Every plugin must fail loudly. What are the realistic failure codes
+        (missing binary, missing API key, bad input, unreadable source)?
+      placeholder: |
+        MISSING_DEPENDENCY  — ffmpeg/ffprobe not on PATH (retryable: no)
+        INVALID_INPUT       — duration <= 0 (retryable: yes)
+        CLIP_UNREADABLE     — source has no decodable video stream (retryable: no)
+
+  - type: checkboxes
+    id: contrib
+    attributes:
+      label: Would you like to implement it?
+      options:
+        - label: I'm willing to open a PR for this (see CONTRIBUTING.md)

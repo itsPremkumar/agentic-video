@@ -1,0 +1,82 @@
+name: Bug report
+description: A plugin failed, produced a wrong result, or failed silently.
+title: "[bug] <plugin id>: <short summary>"
+labels: ["bug"]
+body:
+  - type: markdown
+    value: |
+      Thanks for the report. Because Agentic Video is driven by an external
+      agent, the most useful thing you can give us is the **exact structured
+      failure** (the JSON with `code` / `reason` / `hint`) — that is the
+      contract we are trying to keep predictable.
+
+  - type: input
+    id: plugin
+    attributes:
+      label: Plugin id
+      description: e.g. `render.timeline`, `video.download`
+      placeholder: image.resize
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Paste the full output, including the JSON failure block if there was one.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      description: >
+        If the plugin failed, what should it have done instead? If the failure
+        was correct but unhelpful, say what would have helped.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: The exact command or JSON payload.
+      render: shell
+      placeholder: |
+        npm run forge run image.resize --input src=in.png --input width=1080 --input height=-1
+    validations:
+      required: true
+
+  - type: textarea
+    id: failure-json
+    attributes:
+      label: Structured failure
+      description: If you have it, paste the JSON error object.
+      render: json
+
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      placeholder: main @ abc1234
+    validations:
+      required: false
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: OS
+      options:
+        - Linux
+        - macOS
+        - Windows
+    validations:
+      required: true
+
+  - type: textarea
+    id: tool-versions
+    attributes:
+      label: Tool versions
+      description: Output of `node -v`, `ffmpeg -version | head -1`, `python --version`
+      render: shell

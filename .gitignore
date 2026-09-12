@@ -5,6 +5,9 @@ __pycache__/
 *.pyc
 dist/
 
+# Local agent/tool state — never part of the published source.
+.workbuddy-ai/
+
 # Voicebox local TTS: isolated venv created by `npm run setup:voicebox`.
 # (vendor/voicebox itself IS committed - it is vendored MIT source.)
 .venv-voicebox/

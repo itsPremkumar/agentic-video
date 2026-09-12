@@ -15,25 +15,34 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { spawn, type ChildProcess } from 'node:child_process';
 import { PluginFailure } from './define.ts';
+import { firstEnv } from './env.ts';
 
-const CANDIDATES: string[] = [
-    process.env.VIDEOFORGE_CHROME ?? '',
-    process.env.CHROME_PATH ?? '',
-    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-    '/usr/bin/google-chrome',
-    '/usr/bin/google-chrome-stable',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser',
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
-].filter(Boolean);
+/**
+ * Chrome locations, resolved lazily.
+ *
+ * This used to be a module-level const, which meant `.env` was never honoured:
+ * the array was built at import time, before anything called loadEnv(). Building
+ * it per call is cheap (a handful of stat()s) and fixes that.
+ */
+function candidates(): string[] {
+    return [
+        firstEnv('AGENTIC_VIDEO_CHROME', 'VIDEOFORGE_CHROME', 'CHROME_PATH') ?? '',
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+        'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+        '/usr/bin/google-chrome',
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/chromium',
+        '/usr/bin/chromium-browser',
+        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+        '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+    ].filter(Boolean);
+}
 
 /** Locate a usable Chromium binary. Returns null when none is installed. */
 export function findChrome(): string | null {
-    for (const c of CANDIDATES) {
+    for (const c of candidates()) {
         try {
             if (c && fs.existsSync(c)) return c;
         } catch {
@@ -51,7 +60,7 @@ export function requireChrome(): string {
             message: 'No Chromium-based browser found on this machine.',
             reason: 'This plugin renders in a real browser and needs Chrome, Edge or Chromium installed.',
             retryable: false,
-            hint: 'Install Google Chrome, or set VIDEOFORGE_CHROME to your browser executable path.',
+            hint: 'Install Google Chrome, or set AGENTIC_VIDEO_CHROME to your browser executable path.',
         });
     }
     return exe;

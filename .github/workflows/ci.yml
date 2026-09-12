@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: Contract check — node ${{ matrix.node }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        node: ["20", "22"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+        # Python is only needed for plugin *discovery* (`npm test` walks every
+        # plugin, including the .py ones). Heavy deps (rembg, edge-tts,
+        # faster-whisper) are imported lazily inside each plugin's run(), so
+        # they are not required here.
+
+      - run: npm ci
+
+      - name: Verify ffmpeg
+        run: |
+          ffmpeg -version
+          ffprobe -version
+
+      - name: Typecheck + plugin contract
+        run: npm test
+
+  smoke:
+    name: Runtime smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: npm ci
+
+      # Proves the CLI boots, the loader discovers every plugin, and a
+      # manifest renders without a real render.
+      - name: forge list
+        run: npm run forge -- list
+
+      - name: forge describe
+        run: npm run forge -- describe image.resize
+
+      - name: Run one real plugin end to end
+        shell: bash
+        run: |
+          node -e "const fs=require('fs');fs.writeFileSync('ci-fixture.png',Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==','base64'))"
+          npm run forge -- run image.resize \
+            --input src=ci-fixture.png --input width=64 --input height=64 \
+            --input out=ci-resized.png
+
+      # The explicit-failure contract: a bad input must exit non-zero and
+      # report INVALID_INPUT with retryable=true — not a bare PLUGIN_ERROR.
+      - name: A bad input fails loudly
+        shell: bash
+        run: |
+          set +e
+          npm run forge -- run image.resize --input src=ci-fixture.png --input width=0 --input height=0
+          code=$?
+          set -e
+          echo "exit=$code"
+          test "$code" -ne 0

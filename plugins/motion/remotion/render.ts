@@ -63,7 +63,7 @@ export default definePlugin({
                 code: 'CHROME_NOT_FOUND',
                 message: 'Remotion needs Chromium to render. None found.',
                 retryable: false,
-                hint: 'Install Google Chrome, or set VIDEOFORGE_CHROME to your browser executable path.',
+                hint: 'Install Google Chrome, or set AGENTIC_VIDEO_CHROME to your browser executable path.',
             });
         }
 

@@ -1,9 +1,18 @@
 # Agentic Video
 
+[![CI](https://github.com/itsPremkumar/agentic-video/actions/workflows/ci.yml/badge.svg)](https://github.com/itsPremkumar/agentic-video/actions/workflows/ci.yml)
+[![Generated docs](https://github.com/itsPremkumar/agentic-video/actions/workflows/docs.yml/badge.svg)](https://github.com/itsPremkumar/agentic-video/actions/workflows/docs.yml)
+[![CodeQL](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml/badge.svg)](https://github.com/itsPremkumar/agentic-video/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Node 20+](https://img.shields.io/badge/node-20%2B-brightgreen.svg)](https://nodejs.org)
+[![Plugins: 124](https://img.shields.io/badge/plugins-124-blue.svg)](plugins/INDEX.md)
+[![MCP](https://img.shields.io/badge/MCP-compatible-purple.svg)](https://modelcontextprotocol.io)
+
 A pure plugin-based toolkit for agentic video editing and creation. An external
 AI agent drives Agentic Video by combining explicit plugins, **one at a time**.
 There is no LLM orchestrator, no goal planner, and no autonomous workflow
-inside this project — it is just a large, explicit set of tools.
+inside this project — just a large, explicit set of tools, each with a
+machine-readable contract.
 
 ```
 External AI agent  ->  Plugin Interface (CLI / HTTP / MCP / batch)
@@ -17,13 +26,32 @@ External AI agent  ->  Plugin Interface (CLI / HTTP / MCP / batch)
            core/* (ffmpeg, browser, validate, registry, runner)
 ```
 
+## Contents
+
+- [Philosophy](#philosophy)
+- [Quick start](#quick-start)
+- [Architecture](#architecture)
+- [Project layout](#project-layout)
+- [Naming conventions](#naming-conventions)
+- [Plugin categories](#plugin-categories)
+- [Browser automation](#browser-automation)
+- [Local voice: the vendored Voicebox backend](#local-voice-the-vendored-voicebox-backend)
+- [Stock media providers](#stock-media-providers)
+- [Namespace consolidation (breaking renames)](#namespace-consolidation-breaking-renames)
+- [The explicit-failure contract](#the-explicit-failure-contract)
+- [Examples](#examples)
+- [Environment](#environment)
+- [Engine breakdown](#engine-breakdown)
+- [Contributing](#contributing)
+- [Licence](#licence)
+
 ## Philosophy
 
 1. **Everything is a plugin.** Even the most basic creation paths
    (SVG → PNG, Canvas animation → MP4, AI text-to-image) are first-class
    plugins with their own inputs, outputs, and explicit failure modes.
 2. **The core stays minimal.** It holds only the infrastructure required to
-   discover, validate, and run plugins (ffmpeg wrapper, headless Chrome
+   discover, validate, and run plugins (ffmpeg wrapper, Playwright browser
    bridge, Python bridge, validation, registry, runner).
 3. **Every operation is explicit and independent.** The external agent decides
    what to do. Nothing inside Agentic Video makes a decision for it.
@@ -37,20 +65,62 @@ External AI agent  ->  Plugin Interface (CLI / HTTP / MCP / batch)
 ## Quick start
 
 ```bash
+git clone https://github.com/itsPremkumar/agentic-video.git
 cd agentic-video
+npm install
 cp .env.example .env                # add FAL_KEY / REPLICATE_API_TOKEN if you want AI plugins
 
-npm run forge list                   # list every plugin (120 by default)
+npm run forge list                   # list every plugin (124)
 npm run forge describe image.resize  # show a plugin's inputs / outputs
 npm run forge run image.resize --input src=input.png --input width=1080 --input height=1920
 npm run forge steps examples/ocean-reel.json    # replay an explicit step list
 ```
 
-Transports:
+Transports — all four expose the same plugin set:
+
 ```bash
 npm run api                          # start HTTP API on http://localhost:8787
 npm run mcp                          # start the MCP stdio server (JSON-RPC)
 ```
+
+Requirements: Node 20+, **ffmpeg + ffprobe on `PATH`**, and Python 3.10+ only
+if you use the Python plugins. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+full setup.
+
+## Architecture
+
+```
+┌───────────────────────────────────────────────────────────────┐
+│  External agent (Claude, GPT, a script, or you)               │
+└───────────────┬───────────────────────────────────────────────┘
+                │  one plugin per call
+     ┌──────────┴───────────┬──────────────┬─────────────────┐
+     v                      v              v                 v
+ bin/forge.ts           api/server.ts   mcp/server.ts   examples/*.json
+ (CLI)                  (HTTP :8787)    (MCP stdio)     (batch steps)
+     └──────────┬───────────┴──────────────┴─────────────────┘
+                v
+        core/runner.ts  ──  validate → run → Artifact[] | PluginFailure
+                │
+                ├── core/loader.ts      walks plugins/** — no registration
+                ├── core/registry.ts    id → manifest
+                ├── core/validate.ts    inputs against the manifest
+                ├── core/media.ts       ffmpeg / ffprobe / python spawn
+                ├── core/playwright.ts  Chromium session + video recording
+                └── core/python.ts      Python plugin bridge
+                │
+                v
+        plugins/**  124 plugins, one file each
+```
+
+Two rules make the whole thing predictable:
+
+- **The filesystem mirrors the namespace.** `video.trim` *is*
+  `plugins/video/trim.ts`. The loader discovers plugins by walking the tree, so
+  there is no registration step and `plugins/INDEX.md` can be generated rather
+  than maintained.
+- **Nothing is substituted.** If a provider, binary or input is wrong, you get a
+  `PluginFailure` — never a different result than the one you asked for.
 
 ## Project layout
 
@@ -65,7 +135,7 @@ agentic-video/
 ├── api/             HTTP transport
 ├── mcp/             Model Context Protocol transport
 ├── vendor/voicebox/ vendored MIT TTS backend (7 engines)
-├── scripts/         setup:voicebox, gen:index
+├── scripts/         setup:voicebox, gen:index, check-plugins
 └── workspace/       generated artifacts — gitignored
 ```
 
@@ -85,6 +155,9 @@ plugin: [`plugins/README.md`](plugins/README.md).
 | Core module | single lowercase word, no prefix/suffix | `core/artifacts.ts` |
 | Transport | one folder per protocol | `api/server.ts`, `mcp/server.ts` |
 | Python side | `python/` (bridge) + `python/forge_py/` (SDK) | `python/run_plugin.py` |
+
+Display name is **Agentic Video**; the npm package is **`agentic-video`**;
+the code slug is `agenticvideo`.
 
 ## Plugin categories
 
@@ -111,7 +184,31 @@ plugin: [`plugins/README.md`](plugins/README.md).
 | `voice` | 11 | `voice.clone`, `voice.list_voices`, `voice.stt`, `voice.tts`, `voice.voicebox_clone`, `voice.voicebox_health`, `voice.voicebox_history`, `voice.voicebox_models`, `voice.voicebox_profiles`, `voice.voicebox_server`, `voice.voicebox_speak` |
 <!-- END GENERATED: categories -->
 
-Every category has a "tier-1" plugin — the most-used single tool — so an agent can solve the common case without learning the entire catalogue. Examples: `video.trim`, `audio.normalize`, `subtitle.create`, `image.resize`, `render.motion_remotion`, `export.derivative`, `fx.transition_effect`, `analyze.video`, `qc.gate`.
+Every category has a "tier-1" plugin — the most-used single tool — so an agent can solve the common case without learning the entire catalogue. Examples: `video.trim`, `audio.normalize`, `subtitle.create`, `image.resize`, `motion.remotion`, `export.derivative`, `fx.transition_effect`, `analyze.video`, `qc.gate`.
+
+This table and [`plugins/INDEX.md`](plugins/INDEX.md) are **generated** by
+`npm run gen:index`; CI fails if they drift.
+
+## Browser automation
+
+The `browser.*` plugins drive a real Chromium through
+[Playwright](https://playwright.dev) — open a page, interact with it, capture
+stills, and record an actual video of the session.
+
+```bash
+npx playwright install chromium
+
+npm run forge run browser.open     --input url=https://example.com --input out=page.png
+npm run forge run browser.record_flow --input url=https://example.com --input actions='[{"action":"scroll","step":600}]'
+npm run forge run browser.scroll_capture --input url=https://example.com --input steps=6
+```
+
+Two things worth knowing:
+
+- **Recording needs full Chromium, not Headless Shell.** `browser.record_flow`
+  therefore launches headed; on a server, run it under `xvfb-run`.
+- `browser.act` executes JavaScript you supply. Treat the target URL as trusted
+  input — see [SECURITY.md](SECURITY.md).
 
 ## Local voice: the vendored Voicebox backend
 
@@ -185,8 +282,9 @@ resolve** — update any script that used them:
 | `style.engine` | `effects.style` |
 | `transition.xfade` | `transitions.xfade` |
 
-Also renamed: `py/` → `python/` (the Python bridge). Plugin *files* moved to
-match their namespace, but no other ids changed.
+Also renamed: `py/` → `python/` (the Python bridge), and the project itself
+from VideoForge to Agentic Video. Plugin *files* moved to match their
+namespace, but no other ids changed.
 
 ## The explicit-failure contract
 
@@ -227,6 +325,10 @@ Step 4 -> music.generate (Generate background music) -> FAILED  [1127ms]
     retry  : yes (with corrected input)
 ```
 
+`retryable` is the important field: `INVALID_INPUT` means *fix the input and
+call again*, while `MISSING_DEPENDENCY` means *no point retrying*. A bad input
+never masquerades as a broken plugin.
+
 ## Examples
 
 * `examples/demo-steps.json` — minimal smoke test.
@@ -245,19 +347,46 @@ Step 4 -> music.generate (Generate background music) -> FAILED  [1127ms]
 * `REPLICATE_API_TOKEN` (image.generate with provider=replicate)
 * `FFMPEG_PATH`, `FFPROBE_PATH` (override auto-detection)
 * `VOICEBOX_URL` (Voicebox TTS server; default `http://localhost:17493`)
-* `VIDEOFORGE_PYTHON`, `VIDEOFORGE_CHROME` (override Python / browser)
+* `AGENTIC_VIDEO_PYTHON`, `AGENTIC_VIDEO_CHROME` (override Python / browser —
+  the old `VIDEOFORGE_PYTHON` / `VIDEOFORGE_CHROME` names still work)
 * `PORT` (HTTP server port; default 8787)
 
 ## Engine breakdown
 
 | Engine | Plugins | When |
 |---|---|---|
-| TypeScript (`definePlugin`) | 56 | everything except voice.tts / voice.list_voices / voice.stt / voice.clone / music.generate |
-| Python (`MANIFEST` + `run(input, ctx)`) | 4 | voice.tts, voice.list_voices, voice.stt, voice.clone, music.generate |
+| TypeScript (`definePlugin`) | 118 | everything except the six Python plugins |
+| Python (`MANIFEST` + `run(payload, ctx)`) | 6 | `voice.tts`, `voice.list_voices`, `voice.stt`, `voice.clone`, `music.generate`, `image.remove_bg` |
 | ffmpeg | image/video/audio/subtitle/render/export/effects/transitions | every video / image op |
-| Headless Chromium (`core/browser.ts`) | image.create, image.canvas, motion.canvas, motion.remotion | any browser-rendered output |
-| fal.ai / Replicate | image.generate, video.generate | AI generation |
-| Local Voicebox server | voice.voicebox_health / _profiles / _clone / _speak | realistic cloned-voice TTS |
+| Chromium via Playwright (`core/playwright.ts`) | 4 | `browser.open`, `browser.act`, `browser.record_flow`, `browser.scroll_capture` |
+| Chromium via CDP (`core/browser.ts`, dependency-free) | 9 | `browser.screenshot`, `browser.record`, `browser.pdf`, `browser.extract`, `browser.mockup`, `image.create`, `image.canvas`, `motion.canvas`, `motion.remotion` |
+| fal.ai / Replicate | `image.generate`, `video.generate` | AI generation |
+| Local Voicebox server | `voice.voicebox_*` | realistic cloned-voice TTS |
 
-The Python bridge is `py/run_plugin.py`; the browser bridge is
-`core/browser.ts`. Both are zero-dependency beyond the system toolchain.
+The Python bridge is `python/run_plugin.py`; the Playwright bridge is
+`core/playwright.ts`.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) — the short version:
+
+```bash
+npm test              # typecheck + plugin contract check (must be clean)
+npm run gen:index     # after adding/renaming a plugin
+```
+
+Adding a plugin is one file at `plugins/<namespace>/<action>.ts`. There is no
+registration step. [Plugin requests](https://github.com/itsPremkumar/agentic-video/issues/new/choose)
+are welcome — the issue template asks for inputs, outputs and failure codes,
+which is exactly what a plugin needs.
+
+Security issues: please report privately — see [SECURITY.md](SECURITY.md).
+Participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Licence
+
+[MIT](LICENSE) © 2026 itsPremkumar.
+
+Vendored third-party code is listed in
+[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) — notably
+[Voicebox](https://github.com/jamiepine/voicebox), also MIT.
