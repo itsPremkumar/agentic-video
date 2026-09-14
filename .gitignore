@@ -1,16 +1,58 @@
+# Dependencies
 node_modules/
-workspace/
+.npm/
+pnpm-lock.yaml
+
+# Environment and secrets
 .env
-__pycache__/
-*.pyc
+.env.*
+!.env.example
+
+# Build and generated outputs
 dist/
+build/
+coverage/
+*.tsbuildinfo
+workspace/
+workspace/**
+output/
+out/
+outputs/
+artifacts/
+cache/
+tmp/
+verify/
+proxies/
+seed/
+stems/
+matched/
+voice-samples/
+
+# Local runtime logs and temp files
+*.log
+*.pid
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Python caches and virtualenvs
+__pycache__/
+*.py[cod]
+.venv/
+.venv*/
+.venv-voicebox/
+.venv-voicebox-py312/
+*.egg-info/
+
+# Editors and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
 
 # Local agent/tool state — never part of the published source.
 .workbuddy-ai/
 
 # Voicebox local TTS: isolated venv created by `npm run setup:voicebox`.
 # (vendor/voicebox itself IS committed - it is vendored MIT source.)
-.venv-voicebox/
-
-# Test fixtures / local input files
-input/

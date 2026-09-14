@@ -1,0 +1,28 @@
+{
+  "source": "test-video.mp4",
+  "language": "en",
+  "text": "Welcome to our show about ocean conservation. Today we explore the deep sea and its mysteries. Marine life is incredibly diverse and fascinating. Let's dive into the coral reefs and see what we find. Coral bleaching is a serious threat to our oceans. Climate change is causing water temperatures to rise dramatically. We must take action to protect these fragile ecosystems. Plastic pollution is another major problem facing our seas. Every year millions of tons of plastic enter the ocean. This affects marine animals and their habitats. Sustainable fishing practices can help restore fish populations. Many species are endangered due to overfishing and habitat destruction. We need international cooperation to solve these problems. Technology is helping scientists monitor ocean health. Satellite imaging provides valuable data about sea surface temperatures. Underwater drones allow researchers to explore previously inaccessible areas. Education is key to raising awareness about ocean conservation. Schools are teaching children about marine biology and environmental science. Communities around the world are taking local action. Beach cleanups and reef restoration projects are making a difference. Together we can protect our oceans for future generations.",
+  "segments": [
+    {"start": 0, "end": 5, "text": "Welcome to our show about ocean conservation."},
+    {"start": 5, "end": 10, "text": "Today we explore the deep sea and its mysteries."},
+    {"start": 10, "end": 15, "text": "Marine life is incredibly diverse and fascinating."},
+    {"start": 15, "end": 20, "text": "Let's dive into the coral reefs and see what we find."},
+    {"start": 20, "end": 25, "text": "Coral bleaching is a serious threat to our oceans."},
+    {"start": 25, "end": 30, "text": "Climate change is causing water temperatures to rise dramatically."},
+    {"start": 30, "end": 35, "text": "We must take action to protect these fragile ecosystems."},
+    {"start": 35, "end": 40, "text": "Plastic pollution is another major problem facing our seas."},
+    {"start": 40, "end": 45, "text": "Every year millions of tons of plastic enter the ocean."},
+    {"start": 45, "end": 50, "text": "This affects marine animals and their habitats."},
+    {"start": 50, "end": 55, "text": "Sustainable fishing practices can help restore fish populations."},
+    {"start": 55, "end": 60, "text": "Many species are endangered due to overfishing and habitat destruction."},
+    {"start": 60, "end": 65, "text": "We need international cooperation to solve these problems."},
+    {"start": 65, "end": 70, "text": "Technology is helping scientists monitor ocean health."},
+    {"start": 70, "end": 75, "text": "Satellite imaging provides valuable data about sea surface temperatures."},
+    {"start": 75, "end": 80, "text": "Underwater drones allow researchers to explore previously inaccessible areas."},
+    {"start": 80, "end": 85, "text": "Education is key to raising awareness about ocean conservation."},
+    {"start": 85, "end": 90, "text": "Schools are teaching children about marine biology and environmental science."},
+    {"start": 90, "end": 95, "text": "Communities around the world are taking local action."},
+    {"start": 95, "end": 100, "text": "Beach cleanups and reef restoration projects are making a difference."},
+    {"start": 100, "end": 105, "text": "Together we can protect our oceans for future generations."}
+  ]
+}
