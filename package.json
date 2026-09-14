@@ -46,7 +46,7 @@
     "setup:voicebox": "node scripts/setup-voicebox.mjs"
   },
   "devDependencies": {
-    "@types/node": "^26.5.0",
+    "@types/node": "^26.5.1",
     "tsx": "^4.19.2",
     "typescript": "^7.0.2"
   },
