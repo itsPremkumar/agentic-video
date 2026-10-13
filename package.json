@@ -60,7 +60,7 @@
     "@remotion/renderer": "^4.0.523",
     "@remotion/shapes": "^4.0.523",
     "@remotion/transitions": "^4.0.523",
-    "playwright": "^1.63.0",
+    "playwright": "^1.64.0",
     "remotion": "^4.0.523"
   }
 }
